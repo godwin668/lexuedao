@@ -1,0 +1,228 @@
+@use '@/styles/variables.scss' as *;
+
+$page-padding: $spacing-lg;
+$button-height-md: 80rpx;
+$radius-button: 50rpx;
+$color-bg-hover: $color-bg-stripe;
+$color-divider: $color-border;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$transition-base: 0.25s ease;
+$shadow-float: $shadow-card;
+$color-accent: $color-warning;
+$color-accent-light: lighten($color-warning, 10%);
+$color-error: $color-danger;
+
+.page {
+  height: 100vh;
+  background: $color-bg-page;
+  display: flex;
+  flex-direction: column;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $page-padding;
+  background: $color-bg-card;
+  box-shadow: $shadow-float;
+}
+
+.topRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: $spacing-xs;
+}
+
+.charInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.charDisplay {
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, $color-hanzi, lighten($color-hanzi, 10%));
+  border-radius: $radius-md;
+  font-size: 40rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+}
+
+.charText {
+  font-size: $font-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.charPinyin {
+  font-size: $font-sm;
+  color: $color-text-hint;
+}
+
+.progress {
+  font-size: $font-md;
+  color: $color-text-secondary;
+  font-weight: 500;
+}
+
+.canvasWrapper {
+  margin: $spacing-md $page-padding;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+  position: relative;
+  width: calc(100vw - #{$page-padding * 2} - #{$spacing-md * 2});
+  height: calc(100vw - #{$page-padding * 2} - #{$spacing-md * 2});
+  max-height: calc(100vh - 280rpx - #{$page-padding * 2} - #{$spacing-md * 2});
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.hintPanel {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin: $spacing-md $page-padding;
+  box-shadow: $shadow-popup;
+}
+
+.hintTitle {
+  font-size: $font-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.hintSteps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.hintStep {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg-hover;
+  border-radius: $radius-round;
+  font-size: $font-sm;
+  color: $color-text-secondary;
+}
+
+.hintClose {
+  text-align: center;
+  font-size: $font-md;
+  color: $color-hanzi;
+  padding: $spacing-sm 0;
+}
+
+.bottomBar {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.actionBtn {
+  flex: 1;
+  height: $button-height-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-button;
+  font-size: $font-md;
+  font-weight: $font-weight-semibold;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.hintBtn {
+  background: $color-bg-hover;
+  color: $color-hanzi;
+}
+
+.hintOverlay {
+  position: absolute;
+  top: $spacing-sm;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(71, 184, 129, 0.9);
+  border-radius: $radius-round;
+  padding: $spacing-xs $spacing-lg;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hintOverlayText {
+  font-size: $font-xs;
+  color: $color-text-white;
+  font-weight: 500;
+}
+
+.hintStepDone {
+  background: $color-hanzi !important;
+  color: $color-text-white !important;
+}
+
+.clearBtn {
+  background: $color-bg-hover;
+  color: $color-error;
+}
+
+.submitBtn {
+  background: linear-gradient(135deg, $color-hanzi, lighten($color-hanzi, 10%));
+  color: $color-text-white;
+}
+
+.prevNext {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.navBtn {
+  width: 64rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg-hover;
+  border-radius: $radius-sm;
+  font-size: $font-lg;
+  color: $color-text-secondary;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.7;
+    background: darken($color-bg-hover, 5%);
+  }
+}
+
+.baseCharBtn {
+  background: $color-bg-hover;
+  color: $color-text-hint;
+}
+
+.baseCharBtnActive {
+  background: $color-hanzi;
+  color: $color-text-white;
+}

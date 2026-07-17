@@ -1,0 +1,228 @@
+@import '@/styles/variables.scss';
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: calc(120rpx + $safe-bottom);
+}
+
+// ===== 头部 =====
+.header {
+  background: linear-gradient(135deg, $color-primary, $color-primary-light);
+  padding: $spacing-lg;
+  padding-top: calc($spacing-xl + env(safe-area-inset-top, 0));
+  color: #fff;
+}
+
+.userRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-round;
+  background: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.greeting {
+  font-size: $font-lg;
+  font-weight: 600;
+}
+
+.levelRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-top: 4rpx;
+}
+
+.level {
+  font-size: $font-sm;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 2rpx 12rpx;
+  border-radius: $radius-sm;
+}
+
+.vipBadge {
+  font-size: $font-xs;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #8B4513;
+  padding: 2rpx 12rpx;
+  border-radius: $radius-sm;
+  font-weight: 700;
+}
+
+.currencyRow {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.currency {
+  font-size: $font-sm;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4rpx 16rpx;
+  border-radius: $radius-sm;
+}
+
+.expBar {
+  height: 8rpx;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4rpx;
+  margin-top: $spacing-md;
+  overflow: hidden;
+}
+
+.expFill {
+  height: 100%;
+  background: #FFD700;
+  border-radius: 4rpx;
+  transition: width 0.3s;
+}
+
+.energyRow {
+  display: flex;
+  justify-content: space-between;
+  margin-top: $spacing-sm;
+  font-size: $font-sm;
+  opacity: 0.9;
+}
+
+.streak {
+  color: #FFD700;
+}
+
+// ===== 通用区块 =====
+.section {
+  margin: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.sectionTitle {
+  font-size: $font-lg;
+  font-weight: 600;
+  margin-bottom: $spacing-md;
+  display: block;
+}
+
+// ===== 今日任务 =====
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.taskItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  background: $color-bg-stripe;
+  border-radius: $radius-md;
+  font-size: $font-md;
+}
+
+.taskProgress {
+  color: $color-primary;
+  font-weight: 600;
+}
+
+// ===== 学科入口 =====
+.subjectGrid {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.subjectCard {
+  flex: 1;
+  border-radius: $radius-lg;
+  padding: $spacing-lg $spacing-md;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+  color: #fff;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.15);
+}
+
+.subjectIcon {
+  font-size: 48rpx;
+}
+
+.subjectName {
+  font-size: $font-lg;
+  font-weight: 700;
+}
+
+.subjectDesc {
+  font-size: $font-xs;
+  opacity: 0.85;
+}
+
+// ===== 竞技入口 =====
+.gameGrid {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.gameCard {
+  flex: 1;
+  background: $color-bg-stripe;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  border: 2rpx solid $color-border;
+}
+
+.gameIcon {
+  font-size: 40rpx;
+}
+
+.gameName {
+  font-size: $font-md;
+  font-weight: 600;
+}
+
+.gameDesc {
+  font-size: $font-xs;
+  color: $color-text-hint;
+}
+
+// ===== 年级切换 =====
+.gradeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.gradeTag {
+  padding: 8rpx 24rpx;
+  border-radius: $radius-md;
+  background: $color-bg-stripe;
+  font-size: $font-sm;
+  color: $color-text-secondary;
+  border: 2rpx solid transparent;
+}
+
+.gradeActive {
+  background: rgba($color-primary, 0.1);
+  color: $color-primary;
+  border-color: $color-primary;
+  font-weight: 600;
+}

@@ -1,0 +1,159 @@
+@import '@/styles/variables.scss';
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: $spacing-xl;
+}
+
+// ===== 头部 =====
+.header {
+  background: linear-gradient(135deg, $color-hanzi, lighten($color-hanzi, 10%));
+  padding: $spacing-lg;
+  padding-top: calc($spacing-xl + env(safe-area-inset-top, 0));
+  color: #fff;
+}
+
+.title {
+  font-size: $font-title;
+  font-weight: 700;
+  display: block;
+}
+
+.subtitle {
+  font-size: $font-sm;
+  opacity: 0.85;
+  margin-top: 4rpx;
+}
+
+// ===== 冒险地图 =====
+.mapSection {
+  margin: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.sectionTitle {
+  font-size: $font-lg;
+  font-weight: 600;
+  margin-bottom: $spacing-md;
+  display: block;
+}
+
+.map {
+  display: flex;
+  flex-direction: column;
+}
+
+.levelRow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.levelNode {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  border-radius: $radius-lg;
+  border: 3rpx solid;
+  background: $color-bg-card;
+}
+
+.unlocked {
+  opacity: 1;
+}
+
+.locked {
+  opacity: 0.5;
+  background: $color-bg-stripe;
+}
+
+.levelIcon {
+  font-size: 48rpx;
+  width: 80rpx;
+  text-align: center;
+}
+
+.levelInfo {
+  flex: 1;
+}
+
+.levelName {
+  font-size: $font-md;
+  font-weight: 600;
+}
+
+.levelDesc {
+  font-size: $font-xs;
+  color: $color-text-hint;
+  margin-top: 2rpx;
+}
+
+.levelProgress {
+  margin-top: $spacing-xs;
+}
+
+.progressBar {
+  height: 8rpx;
+  background: $color-border;
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 4rpx;
+  transition: width 0.3s;
+}
+
+.progressText {
+  font-size: $font-xs;
+  color: $color-text-hint;
+  margin-top: 4rpx;
+}
+
+.connector {
+  color: $color-border;
+  font-size: 24rpx;
+  line-height: 1;
+  padding: 4rpx 0;
+}
+
+// ===== 快捷入口 =====
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin: 0 $spacing-md;
+}
+
+.actionCard {
+  width: calc(50% - 8rpx);
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
+}
+
+.actionIcon {
+  font-size: 40rpx;
+}
+
+.actionTitle {
+  font-size: $font-md;
+  font-weight: 700;
+}
+
+.actionDesc {
+  font-size: $font-xs;
+  opacity: 0.85;
+}

@@ -1,0 +1,299 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { View, Text, Canvas } from '@tarojs/components';
+import Taro from '@tarojs/taro';
+import { useHanziStore } from '@/store/useHanziStore';
+import { callFunction } from '@/services/cloud';
+import { PracticeRecord } from '@/types';
+import { getStrokeData } from '@/data/strokeData';
+import { StrokeAnimationRenderer, drawGrid, drawAllStrokeOutlines } from '@/utils/canvasStrokeRenderer';
+import { evaluateCharacterScore } from '@/utils/strokeScoring';
+import { useCanvasCore } from '@/hooks/useCanvasCore';
+import styles from './index.module.scss';
+
+const WritePage: React.FC = () => {
+  const { selectedCharacters, currentCharIndex, nextChar, prevChar } = useHanziStore();
+  const [showHint, setShowHint] = useState(false);
+  const [showBaseChar, setShowBaseChar] = useState(true);
+  const [animCurrentStroke, setAnimCurrentStroke] = useState(0);
+  const animRendererRef = useRef<StrokeAnimationRenderer | null>(null);
+  const showHintRef = useRef(false);
+  const showBaseCharRef = useRef(true);
+
+  const currentChar = selectedCharacters[currentCharIndex];
+
+  const {
+    ctxRef,
+    logicalSizeRef,
+    userStrokes,
+    setUserStrokes,
+    initCanvas,
+    clearCanvas,
+    redrawStrokes,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+  } = useCanvasCore({
+    canvasId: '#writeCanvas',
+    disabled: showHint,
+    strokeColor: '#333333',
+  });
+
+  useEffect(() => { showHintRef.current = showHint; }, [showHint]);
+  useEffect(() => { showBaseCharRef.current = showBaseChar; }, [showBaseChar]);
+
+  const strokeData = getStrokeData(currentChar?.char || '');
+  const totalStrokes = strokeData?.medians.length || currentChar?.strokes;
+
+  const drawBaseChar = useCallback((ctx: any, w: number, h: number) => {
+    const sd = getStrokeData(currentChar?.char || '');
+    if (sd) {
+      drawAllStrokeOutlines(
+        ctx, sd.strokes,
+        { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 },
+        false, 'rgba(0, 0, 0, 0.1)',
+      );
+    }
+  }, [currentChar]);
+
+  useEffect(() => {
+    if (!currentChar) {
+      Taro.showToast({ title: '请先选择汉字', icon: 'none' });
+      Taro.navigateBack();
+      return;
+    }
+    setUserStrokes([]);
+    setShowHint(false);
+    setAnimCurrentStroke(0);
+    initCanvas((ctx, w, h) => {
+      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 });
+      if (showBaseCharRef.current) {
+        drawBaseChar(ctx, w, h);
+      }
+    });
+    return () => {
+      animRendererRef.current?.destroy();
+    };
+  }, [currentCharIndex]);
+
+  const startAnimation = useCallback(() => {
+    if (!currentChar) return;
+    if (!ctxRef.current) {
+      Taro.showToast({ title: '画布尚未就绪，请稍候', icon: 'none' });
+      return;
+    }
+
+    const sd = getStrokeData(currentChar.char);
+    if (!sd || sd.medians.length === 0) {
+      Taro.showToast({ title: '暂无该字笔顺数据', icon: 'none' });
+      return;
+    }
+
+    const { w, h } = logicalSizeRef.current;
+    const ctx = ctxRef.current;
+
+    ctx.clearRect(0, 0, w, h);
+    drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 });
+
+    const renderer = new StrokeAnimationRenderer(ctx, sd.medians, {
+      canvasWidth: w, canvasHeight: h, margin: 20,
+    });
+    renderer.setColors('rgba(71, 184, 129, 0.3)', 'rgba(255, 74, 74, 0.85)');
+
+    if (showBaseCharRef.current) {
+      renderer.drawBackground = () => {
+        drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 });
+        drawAllStrokeOutlines(
+          ctx, sd.strokes,
+          { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 },
+          false, 'rgba(0, 0, 0, 0.1)',
+        );
+      };
+    }
+
+    renderer.onAnimationFrame((state) => {
+      setAnimCurrentStroke(state.currentStrokeIndex + 1);
+    });
+    renderer.onAnimationComplete(() => {
+      setAnimCurrentStroke(sd.medians.length);
+    });
+
+    animRendererRef.current = renderer;
+    renderer.start(60);
+  }, [currentChar, ctxRef, logicalSizeRef]);
+
+  const restoreUserStrokes = useCallback(() => {
+    if (!ctxRef.current) return;
+    const { w, h } = logicalSizeRef.current;
+    ctxRef.current.clearRect(0, 0, w, h);
+    drawGrid(ctxRef.current, { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 });
+    if (showBaseCharRef.current) {
+      drawBaseChar(ctxRef.current, w, h);
+    }
+    redrawStrokes(userStrokes);
+  }, [ctxRef, logicalSizeRef, userStrokes, drawBaseChar, redrawStrokes]);
+
+  const handleClear = () => {
+    clearCanvas((ctx, w, h) => {
+      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 });
+      if (showBaseCharRef.current) {
+        drawBaseChar(ctx, w, h);
+      }
+    });
+    setAnimCurrentStroke(0);
+    animRendererRef.current?.destroy();
+    animRendererRef.current = null;
+  };
+
+  const handleToggleHint = () => {
+    if (showHint) {
+      setShowHint(false);
+      setAnimCurrentStroke(0);
+      animRendererRef.current?.destroy();
+      animRendererRef.current = null;
+      restoreUserStrokes();
+    } else {
+      setShowHint(true);
+      setAnimCurrentStroke(0);
+      startAnimation();
+    }
+  };
+
+  const handleToggleBaseChar = () => {
+    const newVal = !showBaseCharRef.current;
+    showBaseCharRef.current = newVal;
+    setShowBaseChar(newVal);
+
+    if (!ctxRef.current) return;
+    const { w, h } = logicalSizeRef.current;
+    ctxRef.current.clearRect(0, 0, w, h);
+    drawGrid(ctxRef.current, { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 });
+    if (newVal) {
+      drawBaseChar(ctxRef.current, w, h);
+    }
+    ctxRef.current.strokeStyle = '#333333';
+    ctxRef.current.lineWidth = 4;
+    ctxRef.current.lineCap = 'round';
+    ctxRef.current.lineJoin = 'round';
+    redrawStrokes(userStrokes);
+  };
+
+  const handleSubmit = async () => {
+    animRendererRef.current?.destroy();
+
+    const sd = getStrokeData(currentChar?.char || '');
+    const { score, accuracy, aesthetics } = evaluateCharacterScore(
+      userStrokes,
+      sd?.medians
+    );
+
+    useHanziStore.getState().setLastSessionData({
+      char: currentChar?.char || '',
+      userStrokes: [...userStrokes],
+    });
+
+    try {
+      await callFunction<PracticeRecord>('savePracticeRecord', {
+        character: currentChar?.char || '',
+        mode: 'free',
+        strokes: userStrokes,
+        score, accuracy, aesthetics,
+        duration: 30,
+      });
+    } catch (err) {
+      console.error('[WritePage] submit error:', err);
+    }
+    Taro.navigateTo({
+      url: `/sub-hanzi/hanzi-result/index?score=${score}&accuracy=${accuracy}&aesthetics=${aesthetics}&char=${currentChar?.char}`,
+    });
+  };
+
+  if (!currentChar) return null;
+
+  return (
+    <View className={styles.page}>
+      <View className={styles.topBar}>
+        <View className={styles.charInfo}>
+          <View className={styles.charDisplay}>
+            <Text>{currentChar.char}</Text>
+          </View>
+          <View>
+            <Text className={styles.charText}>{currentChar.char}</Text>
+            <Text className={styles.charPinyin}>{currentChar.pinyin}</Text>
+          </View>
+        </View>
+        <View className={styles.topRight}>
+          <View className={styles.prevNext}>
+            {currentCharIndex > 0 && (
+              <View className={styles.navBtn} onClick={prevChar}>
+                <Text>{'<'}</Text>
+              </View>
+            )}
+            {currentCharIndex < selectedCharacters.length - 1 && (
+              <View className={styles.navBtn} onClick={nextChar}>
+                <Text>{'>'}</Text>
+              </View>
+            )}
+          </View>
+          <Text className={styles.progress}>
+            {currentCharIndex + 1} / {selectedCharacters.length}
+          </Text>
+        </View>
+      </View>
+
+      <View className={styles.canvasWrapper}>
+        <Canvas
+          id="writeCanvas"
+          type="2d"
+          className={styles.canvas}
+          disableScroll
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        />
+        {showHint && animCurrentStroke > 0 && (
+          <View className={styles.hintOverlay}>
+            <Text className={styles.hintOverlayText}>
+              笔顺演示 第{animCurrentStroke}/{totalStrokes}画
+            </Text>
+          </View>
+        )}
+      </View>
+
+      {showHint && (
+        <View className={styles.hintPanel}>
+          <Text className={styles.hintTitle}>笔画顺序提示（共{totalStrokes}画）</Text>
+          <View className={styles.hintSteps}>
+            {Array.from({ length: totalStrokes }).map((_, i) => (
+              <View key={i} className={`${styles.hintStep} ${animCurrentStroke > i ? styles.hintStepDone : ''}`}>
+                <Text>{i + 1}</Text>
+              </View>
+            ))}
+          </View>
+          <View className={styles.hintClose} onClick={handleToggleHint}>
+            <Text>关闭提示</Text>
+          </View>
+        </View>
+      )}
+
+      <View className={styles.bottomBar}>
+        <View
+          className={`${styles.actionBtn} ${styles.baseCharBtn} ${showBaseChar ? styles.baseCharBtnActive : ''}`}
+          onClick={handleToggleBaseChar}
+        >
+          <Text>{showBaseChar ? '底字 ON' : '底字 OFF'}</Text>
+        </View>
+        <View className={`${styles.actionBtn} ${styles.hintBtn}`} onClick={handleToggleHint}>
+          <Text>{showHint ? '停止演示' : '笔顺演示'}</Text>
+        </View>
+        <View className={`${styles.actionBtn} ${styles.clearBtn}`} onClick={handleClear}>
+          <Text>清除</Text>
+        </View>
+        <View className={`${styles.actionBtn} ${styles.submitBtn}`} onClick={handleSubmit}>
+          <Text>提交评分</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+export default WritePage;

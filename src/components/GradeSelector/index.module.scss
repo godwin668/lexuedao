@@ -1,0 +1,42 @@
+@use '@/styles/variables.scss' as *;
+
+.selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $spacing-lg;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+}
+
+.label {
+  font-size: $font-md;
+  color: $color-text-secondary;
+  font-weight: 500;
+}
+
+.grades {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+.gradeItem {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-round;
+  font-size: $font-md;
+  font-weight: 500;
+  color: $color-text-secondary;
+  background: $color-bg-stripe;
+  transition: all 0.25s ease;
+
+  &.active {
+    background: linear-gradient(135deg, $color-hanzi, lighten($color-hanzi, 10%));
+    color: $color-text-white;
+    box-shadow: 0 4rpx 12rpx rgba($color-hanzi, 0.3);
+  }
+}

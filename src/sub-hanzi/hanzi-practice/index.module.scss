@@ -1,0 +1,166 @@
+@use '@/styles/variables.scss' as *;
+
+$page-padding: $spacing-lg;
+$button-height-md: 80rpx;
+$radius-button: 50rpx;
+$color-bg-hover: $color-bg-stripe;
+$color-divider: $color-border;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$transition-base: 0.25s ease;
+$shadow-float: $shadow-card;
+$color-accent: $color-warning;
+$color-accent-light: lighten($color-warning, 10%);
+$color-error: $color-danger;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: $spacing-xl;
+}
+
+.topSection {
+  padding: $spacing-md $page-padding;
+  background: $color-bg-card;
+}
+
+.modeTabs {
+  display: flex;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  padding: 4rpx;
+  margin-bottom: $spacing-md;
+}
+
+.modeTab {
+  flex: 1;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-sm;
+  font-size: $font-md;
+  color: $color-text-secondary;
+  transition: all $transition-base;
+
+  &.active {
+    background: linear-gradient(135deg, $color-hanzi, lighten($color-hanzi, 10%));
+    color: $color-text-white;
+    font-weight: $font-weight-semibold;
+  }
+
+  &:active {
+    opacity: 0.85;
+  }
+}
+
+.customRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-top: $spacing-md;
+}
+
+.customLabel {
+  font-size: $font-sm;
+  color: $color-text-secondary;
+  white-space: nowrap;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.stepperBtn {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg-hover;
+  border-radius: $radius-round;
+  font-size: $font-lg;
+  color: $color-hanzi;
+  font-weight: $font-weight-bold;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.7;
+    transform: scale(0.92);
+  }
+}
+
+.stepperValue {
+  font-size: $font-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  min-width: 48rpx;
+  text-align: center;
+}
+
+.charSection {
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($button-height-md + $spacing-lg + env(safe-area-inset-bottom));
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.sectionTitle {
+  font-size: $font-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.selectAll {
+  font-size: $font-sm;
+  color: $color-hanzi;
+  padding: $spacing-xs $spacing-md;
+}
+
+.selectedInfo {
+  font-size: $font-sm;
+  color: $color-text-hint;
+  margin-top: $spacing-md;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.startBtn {
+  width: 100%;
+  height: $button-height-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, $color-hanzi, lighten($color-hanzi, 10%));
+  border-radius: $radius-button;
+  color: $color-text-white;
+  font-size: $font-lg;
+  font-weight: $font-weight-semibold;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+
+  &.disabled {
+    background: $color-text-disabled;
+    opacity: 0.6;
+  }
+}

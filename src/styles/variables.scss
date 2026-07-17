@@ -1,0 +1,60 @@
+// 主题色
+$color-primary: #4A90D9;
+$color-primary-light: #7AB8F5;
+$color-primary-dark: #2E6BB5;
+
+// 学科色
+$color-hanzi: #47B881;
+$color-math: #FF8C42;
+$color-english: #7C5CFC;
+
+// 功能色
+$color-success: #52C41A;
+$color-warning: #FAAD14;
+$color-danger: #FF4D4F;
+$color-info: #909399;
+
+// 文字色
+$color-text-primary: #333333;
+$color-text-secondary: #666666;
+$color-text-hint: #999999;
+$color-text-disabled: #CCCCCC;
+$color-text-white: #FFFFFF;
+
+// 背景色
+$color-bg-page: #F5F7FA;
+$color-bg-card: #FFFFFF;
+$color-bg-stripe: #FAFBFC;
+
+// 边框
+$color-border: #E8E8E8;
+
+// 圆角
+$radius-xs: 4rpx;
+$radius-sm: 8rpx;
+$radius-md: 16rpx;
+$radius-lg: 24rpx;
+$radius-round: 50%;
+
+// 阴影
+$shadow-card: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+$shadow-popup: 0 8rpx 32rpx rgba(0, 0, 0, 0.12);
+
+// 字体大小
+$font-xs: 20rpx;
+$font-sm: 24rpx;
+$font-md: 28rpx;
+$font-lg: 32rpx;
+$font-xl: 36rpx;
+$font-xxl: 44rpx;
+$font-title: 52rpx;
+
+// 间距
+$spacing-xs: 8rpx;
+$spacing-sm: 16rpx;
+$spacing-md: 24rpx;
+$spacing-lg: 32rpx;
+$spacing-xl: 48rpx;
+
+// 安全区
+$safe-bottom: env(safe-area-inset-bottom, 0);
