@@ -1,4 +1,4 @@
 export default definePageConfig({
-  navigationBarTitleText: '乐学小课堂',
+  navigationBarTitleText: '乐学岛',
   navigationStyle: 'custom',
 })

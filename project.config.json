@@ -1,8 +1,8 @@
 {
   "miniprogramRoot": "dist/",
   "cloudfunctionRoot": "cloudfunctions/",
-  "projectname": "lexue-weapp",
-  "description": "乐学小课堂 - 小学生语数英全科学习小程序",
+  "projectname": "lexuedao",
+  "description": "乐学岛 - 语数英全科学习小程序",
   "appid": "wx78b365e8fcc64bfc",
   "setting": {
     "urlCheck": true,

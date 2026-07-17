@@ -49,7 +49,7 @@ export default defineAppConfig({
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#4A90D9',
-    navigationBarTitleText: '乐学小课堂',
+    navigationBarTitleText: '乐学岛',
     navigationBarTextStyle: 'white',
   },
   tabBar: {

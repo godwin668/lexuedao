@@ -1,170 +1,225 @@
 -- ============================================
--- 乐学小课堂 MySQL 数据库初始化脚本
--- CloudBase MySQL 5.7+
+-- 乐学岛 PostgreSQL 数据库初始化脚本
+-- CloudBase PostgreSQL 15+
 -- ============================================
 
 -- ===== 用户体系 =====
 
 CREATE TABLE IF NOT EXISTS users (
-  id          BIGINT PRIMARY KEY AUTO_INCREMENT,
-  openid      VARCHAR(64) NOT NULL UNIQUE COMMENT '微信openid',
-  nickname    VARCHAR(32) DEFAULT '小朋友' COMMENT '昵称',
-  avatar_url  VARCHAR(256) DEFAULT '' COMMENT '头像URL',
-  role        ENUM('student','parent') NOT NULL DEFAULT 'student' COMMENT '角色',
-  grade       TINYINT DEFAULT 1 COMMENT '年级 1-6',
-  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at  DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  INDEX idx_openid (openid),
-  INDEX idx_role (role)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+  id          BIGSERIAL PRIMARY KEY,
+  openid      VARCHAR(64) NOT NULL UNIQUE,
+  nickname    VARCHAR(32) DEFAULT '小朋友',
+  avatar_url  VARCHAR(256) DEFAULT '',
+  role        VARCHAR(16) NOT NULL DEFAULT 'student' CHECK (role IN ('student', 'parent')),
+  grade       SMALLINT DEFAULT 1 CHECK (grade BETWEEN 1 AND 6),
+  created_at  TIMESTAMPTZ DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_users_openid ON users(openid);
+CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+COMMENT ON TABLE users IS '用户表';
+COMMENT ON COLUMN users.openid IS '微信openid';
+COMMENT ON COLUMN users.role IS '角色: student=学生, parent=家长';
+COMMENT ON COLUMN users.grade IS '年级 1-6';
 
 CREATE TABLE IF NOT EXISTS parent_child (
-  id          BIGINT PRIMARY KEY AUTO_INCREMENT,
-  parent_id   BIGINT NOT NULL COMMENT '家长用户ID',
-  child_id    BIGINT NOT NULL COMMENT '孩子用户ID',
-  relation    VARCHAR(16) DEFAULT '' COMMENT '关系: 爸爸/妈妈/爷爷/奶奶',
-  is_active   TINYINT(1) DEFAULT 1 COMMENT '是否有效',
-  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (parent_id) REFERENCES users(id),
-  FOREIGN KEY (child_id) REFERENCES users(id),
-  UNIQUE KEY uk_parent_child (parent_id, child_id),
-  INDEX idx_parent (parent_id),
-  INDEX idx_child (child_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='家长孩子绑定表';
+  id          BIGSERIAL PRIMARY KEY,
+  parent_id   BIGINT NOT NULL REFERENCES users(id),
+  child_id    BIGINT NOT NULL REFERENCES users(id),
+  relation    VARCHAR(16) DEFAULT '',
+  is_active   BOOLEAN DEFAULT TRUE,
+  created_at  TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (parent_id, child_id)
+);
+CREATE INDEX IF NOT EXISTS idx_pc_parent ON parent_child(parent_id);
+CREATE INDEX IF NOT EXISTS idx_pc_child ON parent_child(child_id);
+COMMENT ON TABLE parent_child IS '家长孩子绑定表';
+COMMENT ON COLUMN parent_child.relation IS '关系: 爸爸/妈妈/爷爷/奶奶';
 
 -- ===== 游戏化体系 =====
 
 CREATE TABLE IF NOT EXISTS user_game_profile (
-  user_id         BIGINT PRIMARY KEY COMMENT '用户ID',
-  level           INT DEFAULT 1 COMMENT '等级 1-50',
-  exp             INT DEFAULT 0 COMMENT '经验值',
-  coins           INT DEFAULT 0 COMMENT '金币',
-  diamonds        INT DEFAULT 0 COMMENT '钻石',
-  energy          INT DEFAULT 10 COMMENT '当前体力',
-  energy_max      INT DEFAULT 10 COMMENT '体力上限',
-  streak_days     INT DEFAULT 0 COMMENT '连续打卡天数',
-  last_login_date DATE COMMENT '最后登录日期',
-  FOREIGN KEY (user_id) REFERENCES users(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户游戏属性表';
+  user_id         BIGINT PRIMARY KEY REFERENCES users(id),
+  level           INT DEFAULT 1 CHECK (level BETWEEN 1 AND 50),
+  exp             INT DEFAULT 0,
+  coins           INT DEFAULT 0,
+  diamonds        INT DEFAULT 0,
+  energy          INT DEFAULT 10,
+  energy_max      INT DEFAULT 10,
+  streak_days     INT DEFAULT 0,
+  last_login_date DATE
+);
+COMMENT ON TABLE user_game_profile IS '用户游戏属性表';
+COMMENT ON COLUMN user_game_profile.level IS '等级 1-50';
+COMMENT ON COLUMN user_game_profile.energy IS '当前体力';
+COMMENT ON COLUMN user_game_profile.energy_max IS '体力上限';
+COMMENT ON COLUMN user_game_profile.streak_days IS '连续打卡天数';
 
 CREATE TABLE IF NOT EXISTS achievements (
-  id          BIGINT PRIMARY KEY AUTO_INCREMENT,
-  `key`       VARCHAR(64) NOT NULL UNIQUE COMMENT '成就标识',
-  name        VARCHAR(64) NOT NULL COMMENT '成就名称',
-  description VARCHAR(256) COMMENT '成就描述',
-  icon        VARCHAR(256) COMMENT '图标',
-  subject     ENUM('hanzi','math','english','general') NOT NULL COMMENT '所属学科',
-  condition_json JSON COMMENT '达成条件',
-  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='成就定义表';
+  id              BIGSERIAL PRIMARY KEY,
+  key             VARCHAR(64) NOT NULL UNIQUE,
+  name            VARCHAR(64) NOT NULL,
+  description     VARCHAR(256),
+  icon            VARCHAR(256),
+  subject         VARCHAR(16) NOT NULL CHECK (subject IN ('hanzi','math','english','general')),
+  condition_json  JSONB,
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+COMMENT ON TABLE achievements IS '成就定义表';
+COMMENT ON COLUMN achievements.key IS '成就标识';
+COMMENT ON COLUMN achievements.subject IS '所属学科';
 
 CREATE TABLE IF NOT EXISTS user_achievements (
-  id              BIGINT PRIMARY KEY AUTO_INCREMENT,
-  user_id         BIGINT NOT NULL COMMENT '用户ID',
-  achievement_key VARCHAR(64) NOT NULL COMMENT '成就标识',
-  unlocked_at     DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '解锁时间',
-  FOREIGN KEY (user_id) REFERENCES users(id),
-  UNIQUE KEY uk_user_achieve (user_id, achievement_key),
-  INDEX idx_user (user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户成就表';
+  id              BIGSERIAL PRIMARY KEY,
+  user_id         BIGINT NOT NULL REFERENCES users(id),
+  achievement_key VARCHAR(64) NOT NULL,
+  unlocked_at     TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (user_id, achievement_key)
+);
+CREATE INDEX IF NOT EXISTS idx_ua_user ON user_achievements(user_id);
+COMMENT ON TABLE user_achievements IS '用户成就表';
 
 -- ===== 学习记录 =====
 
 CREATE TABLE IF NOT EXISTS practice_records (
-  id            BIGINT PRIMARY KEY AUTO_INCREMENT,
-  user_id       BIGINT NOT NULL COMMENT '用户ID',
-  subject       ENUM('hanzi','math','english') NOT NULL COMMENT '学科',
-  type          ENUM('practice','test','battle','challenge') NOT NULL COMMENT '类型',
-  grade         TINYINT DEFAULT 1 COMMENT '年级',
-  content_json  JSON COMMENT '内容数据',
-  score         INT DEFAULT 0 COMMENT '得分',
-  accuracy      INT DEFAULT 0 COMMENT '准确率',
-  duration      INT DEFAULT 0 COMMENT '耗时(秒)',
-  exp_gained    INT DEFAULT 0 COMMENT '获得经验',
-  coins_gained  INT DEFAULT 0 COMMENT '获得金币',
-  created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id),
-  INDEX idx_user_subject_time (user_id, subject, created_at),
-  INDEX idx_subject_type (subject, type)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='练习/测试记录表';
+  id            BIGSERIAL PRIMARY KEY,
+  user_id       BIGINT NOT NULL REFERENCES users(id),
+  subject       VARCHAR(16) NOT NULL CHECK (subject IN ('hanzi','math','english')),
+  type          VARCHAR(16) NOT NULL CHECK (type IN ('practice','test','battle','challenge')),
+  grade         SMALLINT DEFAULT 1,
+  content_json  JSONB,
+  score         INT DEFAULT 0,
+  accuracy      INT DEFAULT 0,
+  duration      INT DEFAULT 0,
+  exp_gained    INT DEFAULT 0,
+  coins_gained  INT DEFAULT 0,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_pr_user_subject_time ON practice_records(user_id, subject, created_at);
+CREATE INDEX IF NOT EXISTS idx_pr_subject_type ON practice_records(subject, type);
+COMMENT ON TABLE practice_records IS '练习/测试记录表（通用）';
+COMMENT ON COLUMN practice_records.duration IS '耗时(秒)';
 
 CREATE TABLE IF NOT EXISTS error_book (
-  id            BIGINT PRIMARY KEY AUTO_INCREMENT,
-  user_id       BIGINT NOT NULL COMMENT '用户ID',
-  subject       ENUM('hanzi','math','english') NOT NULL COMMENT '学科',
-  item_key      VARCHAR(128) NOT NULL COMMENT '项目标识(汉字/题目/单词)',
-  error_count   INT DEFAULT 1 COMMENT '错误次数',
-  last_error_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '最后错误时间',
-  mastered      TINYINT(1) DEFAULT 0 COMMENT '是否已掌握',
-  FOREIGN KEY (user_id) REFERENCES users(id),
-  UNIQUE KEY uk_user_item (user_id, subject, item_key),
-  INDEX idx_user_subject (user_id, subject)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='错题/错字本';
+  id            BIGSERIAL PRIMARY KEY,
+  user_id       BIGINT NOT NULL REFERENCES users(id),
+  subject       VARCHAR(16) NOT NULL CHECK (subject IN ('hanzi','math','english')),
+  item_key      VARCHAR(128) NOT NULL,
+  error_count   INT DEFAULT 1,
+  last_error_at TIMESTAMPTZ DEFAULT NOW(),
+  mastered      BOOLEAN DEFAULT FALSE,
+  UNIQUE (user_id, subject, item_key)
+);
+CREATE INDEX IF NOT EXISTS idx_eb_user_subject ON error_book(user_id, subject);
+COMMENT ON TABLE error_book IS '错题/错字本';
+COMMENT ON COLUMN error_book.item_key IS '项目标识(汉字/题目/单词)';
+COMMENT ON COLUMN error_book.mastered IS '是否已掌握';
 
 -- ===== 对战系统 =====
 
 CREATE TABLE IF NOT EXISTS battle_records (
-  id            BIGINT PRIMARY KEY AUTO_INCREMENT,
-  subject       ENUM('hanzi','math','english') NOT NULL COMMENT '学科',
-  player1_id    BIGINT NOT NULL COMMENT '玩家1',
-  player2_id    BIGINT NOT NULL COMMENT '玩家2',
-  player1_score INT DEFAULT 0 COMMENT '玩家1得分',
-  player2_score INT DEFAULT 0 COMMENT '玩家2得分',
-  winner_id     BIGINT COMMENT '胜者ID',
-  status        ENUM('matching','playing','finished') DEFAULT 'matching' COMMENT '状态',
-  created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (player1_id) REFERENCES users(id),
-  FOREIGN KEY (player2_id) REFERENCES users(id),
-  INDEX idx_status (status),
-  INDEX idx_players (player1_id, player2_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='对战记录表';
+  id            BIGSERIAL PRIMARY KEY,
+  subject       VARCHAR(16) NOT NULL CHECK (subject IN ('hanzi','math','english')),
+  player1_id    BIGINT NOT NULL REFERENCES users(id),
+  player2_id    BIGINT NOT NULL REFERENCES users(id),
+  player1_score INT DEFAULT 0,
+  player2_score INT DEFAULT 0,
+  winner_id     BIGINT,
+  status        VARCHAR(16) DEFAULT 'matching' CHECK (status IN ('matching','playing','finished')),
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_br_status ON battle_records(status);
+CREATE INDEX IF NOT EXISTS idx_br_players ON battle_records(player1_id, player2_id);
+COMMENT ON TABLE battle_records IS '对战记录表';
 
 -- ===== 付费体系 =====
 
 CREATE TABLE IF NOT EXISTS subscription_orders (
-  id          BIGINT PRIMARY KEY AUTO_INCREMENT,
-  user_id     BIGINT NOT NULL COMMENT '用户ID',
-  plan        ENUM('monthly','quarterly','yearly') NOT NULL COMMENT '订阅方案',
-  amount      INT NOT NULL COMMENT '金额(分)',
-  status      ENUM('pending','paid','cancelled','expired') DEFAULT 'pending' COMMENT '状态',
-  start_date  DATE COMMENT '开始日期',
-  end_date    DATE COMMENT '结束日期',
-  wx_order_id VARCHAR(64) COMMENT '微信支付订单号',
-  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id),
-  INDEX idx_user (user_id),
-  INDEX idx_status (status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订阅订单表';
+  id          BIGSERIAL PRIMARY KEY,
+  user_id     BIGINT NOT NULL REFERENCES users(id),
+  plan        VARCHAR(16) NOT NULL CHECK (plan IN ('monthly','quarterly','yearly')),
+  amount      INT NOT NULL,
+  status      VARCHAR(16) DEFAULT 'pending' CHECK (status IN ('pending','paid','cancelled','expired')),
+  start_date  DATE,
+  end_date    DATE,
+  wx_order_id VARCHAR(64),
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_so_user ON subscription_orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_so_status ON subscription_orders(status);
+COMMENT ON TABLE subscription_orders IS 'VIP订阅订单表';
+COMMENT ON COLUMN subscription_orders.amount IS '金额(分)';
 
 CREATE TABLE IF NOT EXISTS diamond_orders (
-  id          BIGINT PRIMARY KEY AUTO_INCREMENT,
-  user_id     BIGINT NOT NULL COMMENT '用户ID',
-  package_id  VARCHAR(32) NOT NULL COMMENT '套餐ID',
-  amount      INT NOT NULL COMMENT '金额(分)',
-  diamonds    INT NOT NULL COMMENT '钻石数量',
-  wx_order_id VARCHAR(64) COMMENT '微信支付订单号',
-  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id),
-  INDEX idx_user (user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='钻石购买记录表';
+  id          BIGSERIAL PRIMARY KEY,
+  user_id     BIGINT NOT NULL REFERENCES users(id),
+  package_id  VARCHAR(32) NOT NULL,
+  amount      INT NOT NULL,
+  diamonds    INT NOT NULL,
+  wx_order_id VARCHAR(64),
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_do_user ON diamond_orders(user_id);
+COMMENT ON TABLE diamond_orders IS '钻石购买记录表';
+COMMENT ON COLUMN diamond_orders.amount IS '金额(分)';
 
 CREATE TABLE IF NOT EXISTS currency_log (
-  id          BIGINT PRIMARY KEY AUTO_INCREMENT,
-  user_id     BIGINT NOT NULL COMMENT '用户ID',
-  currency    ENUM('coin','diamond') NOT NULL COMMENT '货币类型',
-  amount      INT NOT NULL COMMENT '数量(正=收入,负=支出)',
-  reason      VARCHAR(64) COMMENT '原因',
-  ref_id      BIGINT COMMENT '关联记录ID',
-  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id),
-  INDEX idx_user_currency (user_id, currency, created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='货币流水表';
+  id          BIGSERIAL PRIMARY KEY,
+  user_id     BIGINT NOT NULL REFERENCES users(id),
+  currency    VARCHAR(16) NOT NULL CHECK (currency IN ('coin','diamond')),
+  amount      INT NOT NULL,
+  reason      VARCHAR(64),
+  ref_id      BIGINT,
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_cl_user_currency ON currency_log(user_id, currency, created_at);
+COMMENT ON TABLE currency_log IS '货币流水表';
+COMMENT ON COLUMN currency_log.amount IS '数量(正=收入,负=支出)';
+
+-- ===== AI 学习推荐（pgvector） =====
+
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- 知识点向量表（用于 AI 相似度推荐）
+CREATE TABLE IF NOT EXISTS knowledge_vectors (
+  id              BIGSERIAL PRIMARY KEY,
+  subject         VARCHAR(16) NOT NULL CHECK (subject IN ('hanzi','math','english')),
+  item_key        VARCHAR(128) NOT NULL,
+  item_name       VARCHAR(128) NOT NULL,
+  grade           SMALLINT DEFAULT 1,
+  difficulty      SMALLINT DEFAULT 1 CHECK (difficulty BETWEEN 1 AND 5),
+  tags            TEXT[] DEFAULT '{}',
+  embedding       vector(256),
+  metadata_json   JSONB,
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_kv_subject_grade ON knowledge_vectors(subject, grade);
+CREATE INDEX IF NOT EXISTS idx_kv_embedding ON knowledge_vectors USING ivfflat (embedding vector_cosine_ops) WITH (lists = 50);
+COMMENT ON TABLE knowledge_vectors IS '知识点向量表（AI推荐）';
+COMMENT ON COLUMN knowledge_vectors.embedding IS '知识点语义向量(256维)';
+COMMENT ON COLUMN knowledge_vectors.tags IS '标签: 如{笔画,独体字,左右结构}';
+
+-- 用户能力画像表（AI 推荐依据）
+CREATE TABLE IF NOT EXISTS user_skill_profile (
+  user_id         BIGINT PRIMARY KEY REFERENCES users(id),
+  subject         VARCHAR(16) NOT NULL CHECK (subject IN ('hanzi','math','english')),
+  skill_vector    vector(256),
+  weak_tags       TEXT[] DEFAULT '{}',
+  strong_tags     TEXT[] DEFAULT '{}',
+  recommended_at  TIMESTAMPTZ,
+  updated_at      TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_usp_user_subject ON user_skill_profile(user_id, subject);
+COMMENT ON TABLE user_skill_profile IS '用户能力画像表（AI推荐）';
+COMMENT ON COLUMN user_skill_profile.skill_vector IS '用户能力向量';
+COMMENT ON COLUMN user_skill_profile.weak_tags IS '薄弱知识点标签';
+COMMENT ON COLUMN user_skill_profile.strong_tags IS '擅长知识点标签';
 
 -- ===== 初始成就数据 =====
 
-INSERT INTO achievements (`key`, name, description, icon, subject, condition_json) VALUES
+INSERT INTO achievements (key, name, description, icon, subject, condition_json) VALUES
 -- 通用成就
-('first_login', '初次见面', '第一次登录乐学小课堂', '🌟', 'general', '{"type":"login","target":1}'),
+('first_login', '初次见面', '第一次登录乐学岛', '🌟', 'general', '{"type":"login","target":1}'),
 ('seven_day_streak', '七日坚持', '连续打卡7天', '🔥', 'general', '{"type":"streak","target":7}'),
 ('thirty_day_streak', '月度之星', '连续打卡30天', '👑', 'general', '{"type":"streak","target":30}'),
 ('level_10', '小有成就', '达到10级', '⭐', 'general', '{"type":"level","target":10}'),
