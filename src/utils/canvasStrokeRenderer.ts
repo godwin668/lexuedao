@@ -123,8 +123,9 @@ export function drawAllStrokeOutlines(
   const offsetY = m + (drawH - gridSize * scale) / 2
 
   ctx.save()
-  ctx.translate(offsetX, offsetY)
-  ctx.scale(scale, scale)
+  // 数据坐标系 Y 轴向上，Canvas Y 轴向下，需要翻转
+  ctx.translate(offsetX, offsetY + gridSize * scale)
+  ctx.scale(scale, -scale)
   ctx.strokeStyle = color
   ctx.fillStyle = color
   ctx.lineWidth = lineWidth / scale
@@ -219,8 +220,9 @@ export class StrokeAnimationRenderer {
 
       const ctx = this.ctx
       ctx.save()
-      ctx.translate(offsetX, offsetY)
-      ctx.scale(scale, scale)
+      // 数据坐标系 Y 轴向上，Canvas Y 轴向下，需要翻转
+      ctx.translate(offsetX, offsetY + gridSize * scale)
+      ctx.scale(scale, -scale)
 
       // 已完成的笔画（浅色填充）
       ctx.strokeStyle = this.fillColor
