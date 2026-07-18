@@ -54,6 +54,14 @@ const ProfilePage: React.FC = () => {
     Taro.navigateTo({ url: '/sub-game/achievements/index' })
   }
 
+  const handleErrorBook = () => {
+    Taro.navigateTo({ url: '/sub-game/error-book/index' })
+  }
+
+  const handleBindChild = () => {
+    Taro.navigateTo({ url: '/sub-game/bind-child/index' })
+  }
+
   // 家长模式下获取孩子统计数据
   useEffect(() => {
     if (currentRole === 'parent' && viewingChildId) {
@@ -72,9 +80,9 @@ const ProfilePage: React.FC = () => {
   const weekDays = ['一', '二', '三', '四', '五', '六', '日']
 
   return (
-    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
+    <View className={styles.page}>
       {/* 用户信息 */}
-      <View className={styles.header}>
+      <View className={styles.header} style={{ paddingTop: `${safeTop}px` }}>
         <View className={styles.avatar}>
           <Text>{user?.avatarUrl || '😊'}</Text>
         </View>
@@ -236,11 +244,21 @@ const ProfilePage: React.FC = () => {
           <Text>💎 钻石商城</Text>
           <Text className={styles.arrow}>›</Text>
         </View>
+        <View className={styles.menuItem} onClick={handleErrorBook}>
+          <Text>📝 错题本</Text>
+          <Text className={styles.arrow}>›</Text>
+        </View>
         {currentRole === 'parent' && (
-          <View className={styles.menuItem} onClick={handleReport}>
-            <Text>📊 学习报告</Text>
-            <Text className={styles.arrow}>›</Text>
-          </View>
+          <>
+            <View className={styles.menuItem} onClick={handleReport}>
+              <Text>📊 学习报告</Text>
+              <Text className={styles.arrow}>›</Text>
+            </View>
+            <View className={styles.menuItem} onClick={handleBindChild}>
+              <Text>👶 绑定孩子</Text>
+              <Text className={styles.arrow}>›</Text>
+            </View>
+          </>
         )}
       </View>
 
