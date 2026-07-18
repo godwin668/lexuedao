@@ -153,8 +153,8 @@ export function drawAllStrokeOutlines(
   const drawW = w - m * 2
   const drawH = h - m * 2
 
-  // 计算字的实际包围盒，用于居中（留 20% 内边距，不贴边）
-  const PADDING_RATIO = 0.8
+  // 计算字的实际包围盒，用于居中（留 10% 内边距）
+  const PADDING_RATIO = 0.9
   const bounds = calcStrokesBounds(strokes)
   const charW = bounds.maxX - bounds.minX || 1
   const charH = bounds.maxY - bounds.minY || 1

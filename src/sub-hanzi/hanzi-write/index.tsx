@@ -48,7 +48,7 @@ const WritePage: React.FC = () => {
     if (sd) {
       drawAllStrokeOutlines(
         ctx, sd.strokes,
-        { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 },
+        { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 },
         false, 'rgba(0, 0, 0, 0.1)',
       );
     }
@@ -64,7 +64,7 @@ const WritePage: React.FC = () => {
     setShowHint(false);
     setAnimCurrentStroke(0);
     initCanvas((ctx, w, h) => {
-      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 });
+      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 });
       if (showBaseCharRef.current) {
         drawBaseChar(ctx, w, h);
       }
@@ -91,19 +91,19 @@ const WritePage: React.FC = () => {
     const ctx = ctxRef.current;
 
     ctx.clearRect(0, 0, w, h);
-    drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 });
+    drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 });
 
     const renderer = new StrokeAnimationRenderer(ctx, sd.medians, {
-      canvasWidth: w, canvasHeight: h, margin: 20,
+      canvasWidth: w, canvasHeight: h, margin: 10,
     });
     renderer.setColors('rgba(71, 184, 129, 0.3)', 'rgba(255, 74, 74, 0.85)');
 
     if (showBaseCharRef.current) {
       renderer.drawBackground = () => {
-        drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 });
+        drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 });
         drawAllStrokeOutlines(
           ctx, sd.strokes,
-          { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 },
+          { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 },
           false, 'rgba(0, 0, 0, 0.1)',
         );
       };
@@ -124,7 +124,7 @@ const WritePage: React.FC = () => {
     if (!ctxRef.current) return;
     const { w, h } = logicalSizeRef.current;
     ctxRef.current.clearRect(0, 0, w, h);
-    drawGrid(ctxRef.current, { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 });
+    drawGrid(ctxRef.current, { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 });
     if (showBaseCharRef.current) {
       drawBaseChar(ctxRef.current, w, h);
     }
@@ -133,7 +133,7 @@ const WritePage: React.FC = () => {
 
   const handleClear = () => {
     clearCanvas((ctx, w, h) => {
-      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 });
+      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 });
       if (showBaseCharRef.current) {
         drawBaseChar(ctx, w, h);
       }
@@ -165,7 +165,7 @@ const WritePage: React.FC = () => {
     if (!ctxRef.current) return;
     const { w, h } = logicalSizeRef.current;
     ctxRef.current.clearRect(0, 0, w, h);
-    drawGrid(ctxRef.current, { canvasWidth: w, canvasHeight: h, margin: 20, gridSize: 1024 });
+    drawGrid(ctxRef.current, { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 });
     if (newVal) {
       drawBaseChar(ctxRef.current, w, h);
     }

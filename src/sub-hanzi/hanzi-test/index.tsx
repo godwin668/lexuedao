@@ -50,13 +50,13 @@ const TestPage: React.FC = () => {
     if (!currentChar) return;
     setUserStrokes([]);
     initCanvas((ctx, w, h) => {
-      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 30, gridSize: 1024 });
+      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 });
     });
   }, [charIndex]);
 
   const handleClear = () => {
     clearCanvas((ctx, w, h) => {
-      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 30, gridSize: 1024 });
+      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 });
     });
   };
 

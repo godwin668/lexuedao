@@ -44,7 +44,7 @@ const TracePage: React.FC = () => {
     if (sd) {
       drawAllStrokeOutlines(
         ctx, sd.strokes,
-        { canvasWidth: w, canvasHeight: h, margin: 30, gridSize: 1024 },
+        { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 },
         false, 'rgba(71, 184, 129, 0.1)',
       );
     }
@@ -60,7 +60,7 @@ const TracePage: React.FC = () => {
     setShowHint(false);
     setAnimCurrentStroke(0);
     initCanvas((ctx, w, h) => {
-      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 30, gridSize: 1024 });
+      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 });
       drawBaseOutline(ctx, w, h);
     });
     return () => {
@@ -85,22 +85,22 @@ const TracePage: React.FC = () => {
     const ctx = ctxRef.current;
 
     ctx.clearRect(0, 0, w, h);
-    drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 30, gridSize: 1024 });
+    drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 });
     drawAllStrokeOutlines(
       ctx, sd.strokes,
-      { canvasWidth: w, canvasHeight: h, margin: 30, gridSize: 1024 },
+      { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 },
       false, 'rgba(71, 184, 129, 0.07)',
     );
 
     const renderer = new StrokeAnimationRenderer(ctx, sd.medians, {
-      canvasWidth: w, canvasHeight: h, margin: 30,
+      canvasWidth: w, canvasHeight: h, margin: 10,
     });
     renderer.drawBackground = () => {
       ctx.clearRect(0, 0, w, h);
-      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 30, gridSize: 1024 });
+      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 });
       drawAllStrokeOutlines(
         ctx, sd.strokes,
-        { canvasWidth: w, canvasHeight: h, margin: 30, gridSize: 1024 },
+        { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 },
         false, 'rgba(71, 184, 129, 0.07)',
       );
     };
@@ -118,7 +118,7 @@ const TracePage: React.FC = () => {
 
   const handleClear = () => {
     clearCanvas((ctx, w, h) => {
-      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 30, gridSize: 1024 });
+      drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 10, gridSize: 1024 });
       drawBaseOutline(ctx, w, h);
     });
     setAnimCurrentStroke(0);

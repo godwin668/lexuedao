@@ -81,8 +81,9 @@ $color-error: $color-danger;
   overflow: hidden;
   position: relative;
   width: calc(100vw - #{$page-padding * 2});
-  aspect-ratio: 1;
+  height: calc(100vw - #{$page-padding * 2});
   max-height: calc(100vh - 420rpx);
+  max-width: calc(100vh - 420rpx);
 }
 
 .canvas {
