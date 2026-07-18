@@ -1,8 +1,395 @@
+@use '@/styles/variables.scss' as *;
+
 .page {
   min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: $spacing-xl;
+}
+
+// ===== 头部 =====
+.header {
+  background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+  padding: $spacing-lg;
+  padding-top: calc($spacing-xl + env(safe-area-inset-top, 0));
+  color: #fff;
+}
+
+.title {
+  font-size: $font-title;
+  font-weight: 700;
+  display: block;
+}
+
+.subtitle {
+  font-size: $font-sm;
+  opacity: 0.85;
+  margin-top: 4rpx;
+}
+
+// ===== 空闲状态 =====
+.idleSection {
+  padding: $spacing-md;
+}
+
+.subjectCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.sectionTitle {
+  font-size: $font-lg;
+  font-weight: 600;
+  margin-bottom: $spacing-md;
+  display: block;
+}
+
+.subjectList {
   display: flex;
+  gap: $spacing-md;
+}
+
+.subjectItem {
+  flex: 1;
+  padding: $spacing-md $spacing-sm;
+  border-radius: $radius-md;
+  border: 3rpx solid $color-border;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.subjectActive {
+  border-width: 3rpx;
+}
+
+.subjectLabel {
+  font-size: $font-md;
+  font-weight: 600;
+}
+
+.startCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.rulesBox {
+  margin-bottom: $spacing-md;
+  padding: $spacing-sm;
+  background: $color-bg-stripe;
+  border-radius: $radius-sm;
+}
+
+.rulesTitle {
+  font-size: $font-md;
+  font-weight: 600;
+  margin-bottom: $spacing-xs;
+  display: block;
+}
+
+.ruleItem {
+  font-size: $font-sm;
+  color: $color-text-secondary;
+  line-height: 1.8;
+  display: block;
+}
+
+.startBtn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+  color: #fff;
+  font-size: $font-lg;
+  font-weight: 700;
+  border-radius: $radius-lg;
+  border: none;
+  padding: 0;
+}
+
+// ===== 匹配中 =====
+.matchingSection {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
-  color: #999;
+  padding: 120rpx $spacing-md;
+}
+
+.matchingAnimation {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: $spacing-lg;
+}
+
+.matchingCircle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120rpx;
+  height: 120rpx;
+  margin-left: -60rpx;
+  margin-top: -60rpx;
+  border-radius: 50%;
+  border: 6rpx solid rgba(255, 107, 107, 0.2);
+  border-top-color: #FF6B6B;
+  animation: spin 1s linear infinite;
+}
+
+.matchingCircle2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90rpx;
+  height: 90rpx;
+  margin-left: -45rpx;
+  margin-top: -45rpx;
+  border-radius: 50%;
+  border: 6rpx solid rgba(255, 142, 83, 0.2);
+  border-top-color: #FF8E53;
+  animation: spin 0.8s linear infinite reverse;
+}
+
+.matchingCircle3 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60rpx;
+  height: 60rpx;
+  margin-left: -30rpx;
+  margin-top: -30rpx;
+  border-radius: 50%;
+  border: 6rpx solid rgba(255, 107, 107, 0.2);
+  border-top-color: #FF6B6B;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.matchingText {
+  font-size: $font-lg;
+  color: $color-text-primary;
+  font-weight: 600;
+}
+
+.matchingHint {
+  font-size: $font-sm;
+  color: $color-text-hint;
+  margin-top: $spacing-xs;
+}
+
+// ===== 对战中 =====
+.playingSection {
+  padding: $spacing-md;
+}
+
+.questionCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.questionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.questionNum {
+  font-size: $font-sm;
+  color: $color-text-hint;
+  background: $color-bg-stripe;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+}
+
+.scoreDisplay {
+  font-size: $font-md;
+  color: #FF6B6B;
+  font-weight: 600;
+}
+
+.questionText {
+  font-size: $font-xl;
+  font-weight: 600;
+  color: $color-text-primary;
+  line-height: 1.6;
+  margin-bottom: $spacing-lg;
+  display: block;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.optionItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  border: 3rpx solid $color-border;
+  background: $color-bg-card;
+  transition: all 0.2s;
+}
+
+.optionLabel {
+  width: 48rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  text-align: center;
+  background: $color-bg-stripe;
+  border-radius: 50%;
+  font-size: $font-sm;
+  font-weight: 700;
+  color: $color-text-secondary;
+  flex-shrink: 0;
+}
+
+.optionText {
+  font-size: $font-md;
+  color: $color-text-primary;
+  flex: 1;
+}
+
+.optionCorrect {
+  border-color: $color-success;
+  background: rgba($color-success, 0.08);
+
+  .optionLabel {
+    background: $color-success;
+    color: #fff;
+  }
+}
+
+.optionWrong {
+  border-color: $color-danger;
+  background: rgba($color-danger, 0.08);
+
+  .optionLabel {
+    background: $color-danger;
+    color: #fff;
+  }
+}
+
+// ===== 对战结束 =====
+.resultSection {
+  padding: $spacing-md;
+}
+
+.resultCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xl $spacing-md;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.resultIcon {
+  font-size: 96rpx;
+  margin-bottom: $spacing-sm;
+}
+
+.resultTitle {
+  font-size: $font-xxl;
+  font-weight: 700;
+  margin-bottom: $spacing-lg;
+}
+
+.scoreBoard {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  width: 100%;
+  justify-content: center;
+}
+
+.scoreItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.scoreLabel {
+  font-size: $font-sm;
+  color: $color-text-hint;
+}
+
+.scoreValue {
+  font-size: $font-title;
+  font-weight: 700;
+}
+
+.scoreVs {
+  font-size: $font-lg;
+  font-weight: 700;
+  color: $color-text-hint;
+}
+
+.rewardBox {
+  width: 100%;
+  background: linear-gradient(135deg, #FFF8E1, #FFF3CD);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.rewardTitle {
+  font-size: $font-sm;
+  color: $color-warning;
+  font-weight: 600;
+  margin-bottom: $spacing-sm;
+  display: block;
+  text-align: center;
+}
+
+.rewardItems {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-xl;
+}
+
+.rewardItem {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.rewardIcon {
+  font-size: $font-lg;
+}
+
+.rewardValue {
+  font-size: $font-md;
+  font-weight: 600;
+  color: $color-text-primary;
+}
+
+.playAgainBtn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+  color: #fff;
+  font-size: $font-lg;
+  font-weight: 700;
+  border-radius: $radius-lg;
+  border: none;
+  padding: 0;
 }

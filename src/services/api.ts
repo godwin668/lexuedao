@@ -157,3 +157,55 @@ export async function getBattleResult(roomId: number): Promise<{
 }> {
   return invoke('getBattleResult', { roomId })
 }
+
+// ============================================================
+// AI 助手
+// ============================================================
+
+export async function aiChat(messages: { role: string; content: string }[]): Promise<{ reply: string }> {
+  return invoke('aiChat', { messages })
+}
+
+export async function analyzeWeakPoints(): Promise<{ weakPoints: any[]; recommendations: string[] }> {
+  return invoke('analyzeWeakPoints')
+}
+
+export async function getRecommendations(params: { subject?: string; count?: number }): Promise<{ items: any[] }> {
+  return invoke('getRecommendations', params)
+}
+
+// ============================================================
+// 学习报告
+// ============================================================
+
+export async function getLearningReport(params: { childId?: number; period?: string }): Promise<any> {
+  return invoke('getLearningReport', params)
+}
+
+// ============================================================
+// 家长绑定
+// ============================================================
+
+export async function bindChild(data: { childOpenid: string; relation: string }): Promise<any> {
+  return invoke('bindChild', data)
+}
+
+export async function getChildList(): Promise<User[]> {
+  return invoke('getChildList')
+}
+
+// ============================================================
+// 支付
+// ============================================================
+
+export async function createPaymentOrder(data: { type: string; plan?: string; packageId?: string }): Promise<{ orderId: number; wxOrderId: string; amount: number }> {
+  return invoke('createPaymentOrder', data)
+}
+
+// ============================================================
+// 排行榜更新
+// ============================================================
+
+export async function updateRank(data: { subject: string; score: number }): Promise<{ rank: string; seasonScore: number }> {
+  return invoke('updateRank', data)
+}

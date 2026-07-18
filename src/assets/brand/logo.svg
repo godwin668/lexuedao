@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A90D9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#357ABD;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="islandGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#5DADE2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2E86C1;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- 背景圆 -->
+  <circle cx="100" cy="100" r="96" fill="url(#bgGrad)" />
+  <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+
+  <!-- 岛屿主体 -->
+  <ellipse cx="100" cy="120" rx="60" ry="25" fill="url(#islandGrad)" opacity="0.9"/>
+  <!-- 岛屿高光 -->
+  <ellipse cx="100" cy="115" rx="50" ry="18" fill="rgba(255,255,255,0.15)"/>
+
+  <!-- 棕榈树/知识树 -->
+  <!-- 树干 -->
+  <rect x="96" y="55" width="8" height="50" rx="3" fill="#8B6914"/>
+  <!-- 树冠左 -->
+  <ellipse cx="82" cy="55" rx="22" ry="18" fill="#27AE60" transform="rotate(-15,82,55)"/>
+  <!-- 树冠右 -->
+  <ellipse cx="118" cy="52" rx="22" ry="18" fill="#2ECC71" transform="rotate(15,118,52)"/>
+  <!-- 树冠中 -->
+  <ellipse cx="100" cy="45" rx="20" ry="18" fill="#58D68D"/>
+
+  <!-- 书本 -->
+  <g transform="translate(135, 95) rotate(10)">
+    <rect x="0" y="0" width="30" height="22" rx="2" fill="#F4D03F"/>
+    <rect x="0" y="0" width="15" height="22" rx="2" fill="#F1C40F"/>
+    <line x1="15" y1="0" x2="15" y2="22" stroke="#D4AC0D" stroke-width="1"/>
+    <!-- 书页线 -->
+    <line x1="5" y1="6" x2="12" y2="6" stroke="#D4AC0D" stroke-width="0.8"/>
+    <line x1="5" y1="10" x2="12" y2="10" stroke="#D4AC0D" stroke-width="0.8"/>
+    <line x1="5" y1="14" x2="12" y2="14" stroke="#D4AC0D" stroke-width="0.8"/>
+    <line x1="18" y1="6" x2="25" y2="6" stroke="#D4AC0D" stroke-width="0.8"/>
+    <line x1="18" y1="10" x2="25" y2="10" stroke="#D4AC0D" stroke-width="0.8"/>
+    <line x1="18" y1="14" x2="25" y2="14" stroke="#D4AC0D" stroke-width="0.8"/>
+  </g>
+
+  <!-- 铅笔 -->
+  <g transform="translate(30, 100) rotate(-20)">
+    <rect x="0" y="0" width="28" height="8" rx="1" fill="#E74C3C"/>
+    <polygon points="28,0 38,4 28,8" fill="#F5CBA7"/>
+    <polygon points="38,4 42,4 38,3.5" fill="#333"/>
+  </g>
+
+  <!-- 星星点缀 -->
+  <text x="150" y="45" font-size="14" fill="#F1C40F" opacity="0.9">★</text>
+  <text x="55" y="35" font-size="10" fill="#F1C40F" opacity="0.7">✦</text>
+  <text x="170" y="80" font-size="8" fill="#F1C40F" opacity="0.6">✦</text>
+
+  <!-- 波浪/海水 -->
+  <path d="M40,140 Q55,132 70,140 Q85,148 100,140 Q115,132 130,140 Q145,148 160,140" 
+        fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <path d="M50,148 Q65,142 80,148 Q95,154 110,148 Q125,142 140,148 Q155,154 170,148" 
+        fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+</svg>

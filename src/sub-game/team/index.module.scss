@@ -1,8 +1,382 @@
+@use '@/styles/variables.scss' as *;
+
 .page {
   min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: $spacing-xl;
+}
+
+// ===== 头部 =====
+.header {
+  background: linear-gradient(135deg, #7C5CFC, #A78BFA);
+  padding: $spacing-lg;
+  padding-top: calc($spacing-xl + env(safe-area-inset-top, 0));
+  color: #fff;
+}
+
+.title {
+  font-size: $font-title;
+  font-weight: 700;
+  display: block;
+}
+
+.subtitle {
+  font-size: $font-sm;
+  opacity: 0.85;
+  margin-top: 4rpx;
+}
+
+// ===== 无队伍 =====
+.noTeamSection {
+  padding: $spacing-md;
+}
+
+.introCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xl $spacing-md;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.introIcon {
+  font-size: 80rpx;
+  margin-bottom: $spacing-sm;
+}
+
+.introTitle {
+  font-size: $font-lg;
+  font-weight: 600;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.introDesc {
+  font-size: $font-sm;
+  color: $color-text-hint;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.actionCards {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.actionCard {
+  flex: 1;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg $spacing-md;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.actionIcon {
+  font-size: 48rpx;
+}
+
+.actionTitle {
+  font-size: $font-md;
+  font-weight: 600;
+  color: $color-text-primary;
+}
+
+.actionDesc {
+  font-size: $font-xs;
+  color: $color-text-hint;
+}
+
+// ===== 弹窗 =====
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
-  color: #999;
+}
+
+.modalMask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modalContent {
+  position: relative;
+  width: 600rpx;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  z-index: 1;
+}
+
+.modalTitle {
+  font-size: $font-lg;
+  font-weight: 700;
+  color: $color-text-primary;
+  text-align: center;
+  margin-bottom: $spacing-md;
+  display: block;
+}
+
+.modalInput {
+  width: 100%;
+  height: 80rpx;
+  border: 2rpx solid $color-border;
+  border-radius: $radius-sm;
+  padding: 0 $spacing-md;
+  font-size: $font-md;
+  box-sizing: border-box;
+  margin-bottom: $spacing-md;
+}
+
+.modalActions {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.modalCancel {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  background: $color-bg-stripe;
+  color: $color-text-secondary;
+  font-size: $font-md;
+  border-radius: $radius-md;
+  border: none;
+  padding: 0;
+}
+
+.modalConfirm {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  background: linear-gradient(135deg, #7C5CFC, #A78BFA);
+  color: #fff;
+  font-size: $font-md;
+  font-weight: 600;
+  border-radius: $radius-md;
+  border: none;
+  padding: 0;
+}
+
+// ===== 有队伍 =====
+.teamSection {
+  padding: $spacing-md;
+}
+
+.teamCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.teamHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.teamName {
+  font-size: $font-xl;
+  font-weight: 700;
+  color: $color-text-primary;
+}
+
+.teamCode {
+  font-size: $font-xs;
+  color: $color-text-hint;
+  background: $color-bg-stripe;
+  padding: 4rpx 16rpx;
+  border-radius: 16rpx;
+}
+
+.progressBox {
+  margin-bottom: $spacing-md;
+  padding: $spacing-sm;
+  background: $color-bg-stripe;
+  border-radius: $radius-sm;
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xs;
+}
+
+.progressLabel {
+  font-size: $font-sm;
+  color: $color-text-secondary;
+}
+
+.progressText {
+  font-size: $font-sm;
+  color: #7C5CFC;
+  font-weight: 600;
+}
+
+.progressBar {
+  height: 12rpx;
+  background: $color-border;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #7C5CFC, #A78BFA);
+  border-radius: 6rpx;
+  transition: width 0.3s;
+}
+
+.scoreBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scoreLabel {
+  font-size: $font-md;
+  color: $color-text-secondary;
+}
+
+.scoreValue {
+  font-size: $font-xxl;
+  font-weight: 700;
+  color: #7C5CFC;
+}
+
+// ===== 成员列表 =====
+.membersCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.sectionTitle {
+  font-size: $font-md;
+  font-weight: 600;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+  display: block;
+}
+
+.memberList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.memberItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  border-radius: $radius-sm;
+  background: $color-bg-stripe;
+}
+
+.memberAvatar {
+  flex-shrink: 0;
+}
+
+.memberAvatarImg {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-color: $color-bg-stripe;
+}
+
+.memberAvatarPlaceholder {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7C5CFC, #A78BFA);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.memberAvatarText {
+  font-size: $font-md;
+  color: #fff;
+  font-weight: 600;
+}
+
+.memberInfo {
+  flex: 1;
+}
+
+.memberName {
+  font-size: $font-md;
+  color: $color-text-primary;
+  font-weight: 500;
+}
+
+.memberLevel {
+  font-size: $font-xs;
+  color: $color-text-hint;
+  margin-top: 2rpx;
+}
+
+.captainTag {
+  font-size: $font-xs;
+  color: #FAAD14;
+  background: rgba(#FAAD14, 0.15);
+  padding: 2rpx 12rpx;
+  border-radius: 16rpx;
+}
+
+// ===== 操作按钮 =====
+.teamActions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.startBtn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: linear-gradient(135deg, #7C5CFC, #A78BFA);
+  color: #fff;
+  font-size: $font-lg;
+  font-weight: 700;
+  border-radius: $radius-lg;
+  border: none;
+  padding: 0;
+}
+
+.leaveBtn {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  background: $color-bg-card;
+  color: $color-text-hint;
+  font-size: $font-md;
+  border-radius: $radius-lg;
+  border: 2rpx solid $color-border;
+  padding: 0;
 }

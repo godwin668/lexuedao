@@ -1,8 +1,330 @@
+@use '@/styles/variables.scss' as *;
+
 .page {
   min-height: 100vh;
+  background: $color-bg-page;
+  display: flex;
+  flex-direction: column;
+}
+
+// ===== 头部 =====
+.header {
+  background: linear-gradient(135deg, #FAAD14, #FFC53D);
+  padding: $spacing-lg;
+  padding-top: calc($spacing-xl + env(safe-area-inset-top, 0));
+  color: #fff;
+}
+
+.title {
+  font-size: $font-title;
+  font-weight: 700;
+  display: block;
+}
+
+.subtitle {
+  font-size: $font-sm;
+  opacity: 0.85;
+  margin-top: 4rpx;
+}
+
+// ===== 学科筛选 =====
+.filterRow {
+  display: flex;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  padding-bottom: 0;
+}
+
+.filterTag {
+  flex: 1;
+  padding: 12rpx 0;
+  border-radius: $radius-sm;
+  background: $color-bg-card;
+  text-align: center;
+  box-shadow: $shadow-card;
+  transition: all 0.2s;
+}
+
+.filterTagActive {
+  background: linear-gradient(135deg, #FAAD14, #FFC53D);
+}
+
+.filterTagText {
+  font-size: $font-sm;
+  color: $color-text-secondary;
+  font-weight: 500;
+}
+
+.filterTagActive .filterTagText {
+  color: #fff;
+  font-weight: 600;
+}
+
+// ===== 范围筛选 =====
+.scopeRow {
+  display: flex;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+}
+
+.scopeTag {
+  flex: 1;
+  padding: 8rpx 0;
+  border-radius: 20rpx;
+  border: 2rpx solid $color-border;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.scopeTagActive {
+  border-color: #FAAD14;
+  background: rgba(#FAAD14, 0.08);
+}
+
+.scopeTagText {
+  font-size: $font-xs;
+  color: $color-text-hint;
+}
+
+.scopeTagActive .scopeTagText {
+  color: #FAAD14;
+  font-weight: 600;
+}
+
+// ===== 前三名 =====
+.topThree {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  padding-bottom: 0;
+}
+
+.topItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  padding: $spacing-sm;
+  border-radius: $radius-md;
+  background: $color-bg-card;
+  box-shadow: $shadow-card;
+  width: 200rpx;
+}
+
+.topFirst {
+  width: 220rpx;
+  padding-top: $spacing-md;
+  padding-bottom: $spacing-md;
+  border: 3rpx solid #FAAD14;
+  background: linear-gradient(180deg, #FFF8E1, #FFF);
+}
+
+.topAvatar {
+  margin-bottom: 4rpx;
+}
+
+.topAvatarImg {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-color: $color-bg-stripe;
+}
+
+.topAvatarPlaceholder {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FAAD14, #FFC53D);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
-  color: #999;
+}
+
+.topAvatarText {
+  font-size: $font-lg;
+  color: #fff;
+  font-weight: 700;
+}
+
+.topFirst .topAvatarImg,
+.topFirst .topAvatarPlaceholder {
+  width: 96rpx;
+  height: 96rpx;
+}
+
+.topMedal {
+  font-size: 40rpx;
+}
+
+.topName {
+  font-size: $font-sm;
+  color: $color-text-primary;
+  font-weight: 500;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.topScore {
+  font-size: $font-xs;
+  color: #FAAD14;
+  font-weight: 600;
+}
+
+// ===== 列表 =====
+.listSection {
+  flex: 1;
+  padding: 0 $spacing-md;
+}
+
+.listHeader {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm 0;
+  border-bottom: 2rpx solid $color-border;
+}
+
+.listHeaderText {
+  font-size: $font-xs;
+  color: $color-text-hint;
+  flex: 1;
+  text-align: center;
+
+  &:first-child {
+    flex: 0 0 80rpx;
+  }
+
+  &:nth-child(2) {
+    flex: 2;
+    text-align: left;
+  }
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm 0;
+  border-bottom: 1rpx solid $color-border;
+}
+
+.listItemMe {
+  background: rgba(#FAAD14, 0.06);
+  margin: 0 (-$spacing-md);
+  padding-left: $spacing-md;
+  padding-right: $spacing-md;
+  border-radius: $radius-sm;
+}
+
+.rankCell {
+  flex: 0 0 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rankIcon {
+  font-size: 36rpx;
+}
+
+.rankNum {
+  font-size: $font-md;
+  color: $color-text-hint;
+  font-weight: 600;
+}
+
+.playerCell {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.avatarImg {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-color: $color-bg-stripe;
+  flex-shrink: 0;
+}
+
+.avatarPlaceholder {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $color-primary, $color-primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatarText {
+  font-size: $font-md;
+  color: #fff;
+  font-weight: 600;
+}
+
+.playerName {
+  font-size: $font-md;
+  color: $color-text-primary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meTag {
+  font-size: $font-xs;
+  color: #FAAD14;
+  background: rgba(#FAAD14, 0.15);
+  padding: 2rpx 12rpx;
+  border-radius: 16rpx;
+  flex-shrink: 0;
+}
+
+.levelCell {
+  flex: 1;
+  text-align: center;
+  font-size: $font-sm;
+  color: $color-text-secondary;
+}
+
+.scoreCell {
+  flex: 1;
+  text-align: center;
+  font-size: $font-md;
+  color: #FAAD14;
+  font-weight: 600;
+}
+
+// ===== 状态 =====
+.loadingMore,
+.noMore,
+.empty {
+  padding: $spacing-lg;
+  text-align: center;
+}
+
+.loadingText,
+.noMoreText {
+  font-size: $font-sm;
+  color: $color-text-hint;
+}
+
+.emptyIcon {
+  font-size: 64rpx;
+  display: block;
+  margin-bottom: $spacing-sm;
+}
+
+.emptyText {
+  font-size: $font-md;
+  color: $color-text-hint;
 }

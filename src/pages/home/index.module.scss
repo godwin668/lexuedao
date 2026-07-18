@@ -226,3 +226,43 @@
   border-color: $color-primary;
   font-weight: 600;
 }
+
+// ===== AI 助手入口 =====
+.aiCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm 0;
+}
+
+.aiCardLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.aiIcon {
+  font-size: 48rpx;
+}
+
+.aiInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.aiTitle {
+  font-size: $font-lg;
+  font-weight: 600;
+  color: $color-text-primary;
+}
+
+.aiDesc {
+  font-size: $font-sm;
+  color: $color-text-hint;
+  margin-top: 4rpx;
+}
+
+.aiArrow {
+  font-size: $font-xl;
+  color: $color-text-hint;
+}

@@ -1,0 +1,198 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: $spacing-xl;
+}
+
+// ===== 头部 =====
+.header {
+  background: linear-gradient(135deg, #667EEA, #764BA2);
+  padding: $spacing-lg;
+  padding-top: calc($spacing-xl + env(safe-area-inset-top, 0));
+  color: #fff;
+}
+
+.title {
+  font-size: $font-xl;
+  font-weight: 700;
+  display: block;
+}
+
+.periodTabs {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+}
+
+.periodTab {
+  padding: 8rpx 32rpx;
+  border-radius: 20rpx;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: $font-md;
+  transition: all 0.2s;
+}
+
+.periodTabActive {
+  background: #fff;
+  color: #667EEA;
+  font-weight: 600;
+}
+
+// ===== 加载/空状态 =====
+.loadingWrap,
+.emptyWrap {
+  display: flex;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+.loadingText,
+.emptyText {
+  font-size: $font-md;
+  color: $color-text-hint;
+}
+
+// ===== 通用区块 =====
+.section {
+  margin: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.sectionTitle {
+  font-size: $font-lg;
+  font-weight: 600;
+  margin-bottom: $spacing-md;
+  display: block;
+}
+
+// ===== 概览卡片 =====
+.overviewGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.overviewCard {
+  width: calc((100% - 24rpx) / 2);
+  background: $color-bg-stripe;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  text-align: center;
+}
+
+.overviewValue {
+  font-size: $font-xxl;
+  font-weight: 700;
+  color: $color-primary;
+  display: block;
+}
+
+.overviewLabel {
+  font-size: $font-xs;
+  color: $color-text-hint;
+  margin-top: 4rpx;
+  display: block;
+}
+
+// ===== 学科分布柱状图 =====
+.distChart {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.distRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.distLabel {
+  width: 80rpx;
+  font-size: $font-sm;
+  color: $color-text-secondary;
+  flex-shrink: 0;
+}
+
+.distBarWrap {
+  flex: 1;
+  height: 32rpx;
+  background: $color-bg-stripe;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.distBar {
+  height: 100%;
+  border-radius: 16rpx;
+  min-width: 8rpx;
+  transition: width 0.5s ease;
+}
+
+.distCount {
+  width: 60rpx;
+  font-size: $font-sm;
+  color: $color-text-hint;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+// ===== 薄弱知识点标签 =====
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.tag {
+  padding: 8rpx 20rpx;
+  background: #FFF1F0;
+  border: 1rpx solid #FFCCC7;
+  border-radius: 20rpx;
+}
+
+.tagText {
+  font-size: $font-sm;
+  color: $color-danger;
+}
+
+// ===== 改进建议 =====
+.recList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.recItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  background: $color-bg-stripe;
+  border-radius: $radius-md;
+}
+
+.recNum {
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  text-align: center;
+  background: $color-primary;
+  color: #fff;
+  border-radius: 50%;
+  font-size: $font-sm;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.recText {
+  flex: 1;
+  font-size: $font-md;
+  color: $color-text-primary;
+  line-height: 1.6;
+}

@@ -1,8 +1,139 @@
+@use 'sass:color';
+@use '@/styles/variables.scss' as *;
+
 .page {
   min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
+}
+
+// ===== 头部 =====
+.header {
+  background: linear-gradient(135deg, $color-math, color.adjust($color-math, $lightness: 10%));
+  padding: $spacing-lg;
+  padding-top: calc($spacing-xl + env(safe-area-inset-top, 0));
+  color: #fff;
+}
+
+.title {
+  font-size: $font-title;
+  font-weight: 700;
+  display: block;
+}
+
+.subtitle {
+  font-size: $font-sm;
+  opacity: 0.85;
+  margin-top: 4rpx;
+}
+
+// ===== 年级选择 =====
+.gradeSection {
+  margin: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.sectionTitle {
+  font-size: $font-lg;
+  font-weight: 600;
+  margin-bottom: $spacing-md;
+  display: block;
+}
+
+.gradeTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.gradeTag {
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-sm;
+  background: $color-bg-stripe;
+  font-size: $font-sm;
+  color: $color-text-secondary;
+  transition: all 0.25s ease;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.gradeActive {
+  background: linear-gradient(135deg, $color-math, color.adjust($color-math, $lightness: 10%));
+  color: #fff;
+  font-weight: 600;
+}
+
+// ===== 入口卡片 =====
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin: 0 $spacing-md;
+}
+
+.actionCard {
+  width: calc(50% - 8rpx);
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.97);
+  }
+}
+
+.actionIcon {
+  font-size: 40rpx;
+}
+
+.actionTitle {
+  font-size: $font-md;
+  font-weight: 700;
+}
+
+.actionDesc {
+  font-size: $font-xs;
+  opacity: 0.85;
+}
+
+// ===== 底部按钮 =====
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $spacing-lg;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.startBtn {
+  width: 100%;
+  height: 80rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
-  color: #999;
+  background: linear-gradient(135deg, $color-math, color.adjust($color-math, $lightness: 10%));
+  border-radius: 50rpx;
+  color: #fff;
+  font-size: $font-lg;
+  font-weight: 600;
+  transition: all 0.25s ease;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
 }

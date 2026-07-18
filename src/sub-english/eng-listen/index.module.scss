@@ -1,8 +1,207 @@
+@use 'sass:color';
+@use '@/styles/variables.scss' as *;
+
 .page {
   min-height: 100vh;
+  background: $color-bg-page;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-lg;
+  padding-bottom: calc($spacing-xl + env(safe-area-inset-bottom));
+}
+
+// ===== 进度条 =====
+.progressSection {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.progressTrack {
+  flex: 1;
+  height: 12rpx;
+  background: $color-border;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, $color-english, color.adjust($color-english, $lightness: 10%));
+  border-radius: 6rpx;
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  font-size: $font-sm;
+  color: $color-text-hint;
+  min-width: 80rpx;
+  text-align: right;
+}
+
+// ===== 得分 =====
+.scoreDisplay {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-lg;
+}
+
+.scoreLabel {
+  font-size: $font-md;
+  color: $color-text-secondary;
+}
+
+.scoreValue {
+  font-size: $font-xl;
+  font-weight: 700;
+  color: $color-english;
+}
+
+// ===== 题目卡片 =====
+.questionCard {
+  width: 100%;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  text-align: center;
+  margin-bottom: $spacing-lg;
+}
+
+.questionLabel {
+  font-size: $font-md;
+  color: $color-text-secondary;
+  display: block;
+  margin-bottom: $spacing-md;
+}
+
+.playBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
-  color: #999;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: linear-gradient(135deg, $color-english, color.adjust($color-english, $lightness: 10%));
+  border-radius: $radius-lg;
+  transition: all 0.25s ease;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.97);
+  }
+}
+
+.playIcon {
+  font-size: 40rpx;
+}
+
+.playText {
+  font-size: $font-md;
+  color: #fff;
+  font-weight: 600;
+}
+
+// ===== 选项 =====
+.optionsGrid {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.optionItem {
+  width: calc(50% - 8rpx);
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+  text-align: center;
+  border: 3rpx solid transparent;
+  transition: all 0.25s ease;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.optionSelected {
+  border-color: $color-english;
+  background: rgba($color-english, 0.05);
+}
+
+.optionCorrect {
+  border-color: $color-success;
+  background: rgba($color-success, 0.08);
+}
+
+.optionWrong {
+  border-color: $color-danger;
+  background: rgba($color-danger, 0.08);
+}
+
+.optionWord {
+  font-size: $font-lg;
+  font-weight: 700;
+  color: $color-text-primary;
+  display: block;
+}
+
+.optionCn {
+  font-size: $font-sm;
+  color: $color-text-hint;
+  margin-top: 4rpx;
+}
+
+// ===== 结果提示 =====
+.resultHint {
+  width: 100%;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  text-align: center;
+
+  &.hintCorrect {
+    border: 3rpx solid $color-success;
+  }
+
+  &.hintWrong {
+    border: 3rpx solid $color-danger;
+  }
+}
+
+.hintIcon {
+  font-size: 48rpx;
+  display: block;
+  margin-bottom: $spacing-sm;
+}
+
+.hintText {
+  font-size: $font-md;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: $spacing-md;
+}
+
+.nextBtn {
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-md;
+  background: linear-gradient(135deg, $color-english, color.adjust($color-english, $lightness: 10%));
+  color: #fff;
+  font-size: $font-md;
+  font-weight: 600;
+  transition: all 0.25s ease;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.97);
+  }
 }

@@ -260,6 +260,93 @@
   font-weight: 600;
 }
 
+// ===== 学习统计（家长看板） =====
+.statsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.statsCard {
+  width: calc((100% - 24rpx) / 2);
+  background: $color-bg-stripe;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  text-align: center;
+}
+
+.statsValue {
+  font-size: $font-xxl;
+  font-weight: 700;
+  color: $color-primary;
+  display: block;
+}
+
+.statsLabel {
+  font-size: $font-xs;
+  color: $color-text-hint;
+  margin-top: 4rpx;
+  display: block;
+}
+
+// ===== 本周趋势 =====
+.weeklySection {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1rpx solid $color-border;
+}
+
+.weeklyTitle {
+  font-size: $font-md;
+  font-weight: 600;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: block;
+}
+
+.chartWrap {
+  padding: 0 $spacing-sm;
+}
+
+.chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 200rpx;
+}
+
+.chartCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.chartBarWrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 4rpx;
+}
+
+.chartBar {
+  width: 100%;
+  max-width: 48rpx;
+  background: linear-gradient(180deg, $color-primary-light, $color-primary);
+  border-radius: $radius-xs $radius-xs 0 0;
+  min-height: 8rpx;
+  transition: height 0.5s ease;
+}
+
+.chartLabel {
+  font-size: $font-xs;
+  color: $color-text-hint;
+  margin-top: $spacing-xs;
+}
+
 // ===== 分享 =====
 .shareBtn {
   margin: $spacing-lg $spacing-md;

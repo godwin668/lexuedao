@@ -1,8 +1,256 @@
+@use 'sass:color';
+@use '@/styles/variables.scss' as *;
+
 .page {
   min-height: 100vh;
+  background: $color-bg-page;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-xl $spacing-lg;
+  padding-bottom: calc($spacing-xl + env(safe-area-inset-bottom));
+}
+
+// ===== 分数圈 =====
+.scoreCircle {
+  width: 260rpx;
+  height: 260rpx;
+  border-radius: $radius-round;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-xl;
+  position: relative;
+
+  &.excellent {
+    background: linear-gradient(135deg, #73D13D, #95DE64);
+    box-shadow: 0 8rpx 24rpx rgba(115, 209, 61, 0.35);
+  }
+
+  &.good {
+    background: linear-gradient(135deg, $color-english, color.adjust($color-english, $lightness: 10%));
+    box-shadow: 0 8rpx 24rpx rgba($color-english, 0.35);
+  }
+
+  &.fair {
+    background: linear-gradient(135deg, $color-warning, color.adjust($color-warning, $lightness: 10%));
+    box-shadow: 0 8rpx 24rpx rgba($color-warning, 0.35);
+  }
+
+  &.poor {
+    background: linear-gradient(135deg, $color-danger, #FF9E9E);
+    box-shadow: 0 8rpx 24rpx rgba($color-danger, 0.35);
+  }
+}
+
+.scoreValue {
+  font-size: 72rpx;
+  font-weight: 700;
+  color: $color-text-white;
+  line-height: 1;
+}
+
+.scoreLabel {
+  font-size: $font-sm;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: $spacing-xs;
+}
+
+// ===== 鼓励语 =====
+.encourage {
+  font-size: $font-xl;
+  font-weight: 600;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xl;
+}
+
+// ===== 详情 =====
+.detailSection {
+  width: 100%;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.detailTitle {
+  font-size: $font-md;
+  font-weight: 600;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: block;
+}
+
+.detailRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm 0;
+  border-bottom: 1rpx solid $color-border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.detailLabel {
+  font-size: $font-md;
+  color: $color-text-secondary;
+}
+
+.detailValue {
+  font-size: $font-md;
+  font-weight: 600;
+  color: $color-text-primary;
+}
+
+.scoreBar {
+  flex: 1;
+  height: 12rpx;
+  background: $color-bg-stripe;
+  border-radius: $radius-round;
+  margin: 0 $spacing-md;
+  overflow: hidden;
+}
+
+.scoreBarFill {
+  height: 100%;
+  border-radius: $radius-round;
+  background: linear-gradient(90deg, $color-english, color.adjust($color-english, $lightness: 10%));
+  transition: width 0.5s ease;
+}
+
+// ===== 单词列表 =====
+.wordListSection {
+  width: 100%;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.wordList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.wordItem {
+  border-radius: $radius-md;
+  padding: $spacing-sm $spacing-md;
+  border: 2rpx solid transparent;
+
+  &.wordCorrect {
+    background: rgba($color-success, 0.06);
+    border-color: rgba($color-success, 0.2);
+  }
+
+  &.wordWrong {
+    background: rgba($color-danger, 0.06);
+    border-color: rgba($color-danger, 0.2);
+  }
+}
+
+.wordHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.wordIndex {
+  width: 40rpx;
+  height: 40rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
-  color: #999;
+  border-radius: $radius-round;
+  background: $color-bg-stripe;
+  font-size: $font-xs;
+  font-weight: 600;
+  color: $color-text-hint;
+}
+
+.wordEn {
+  flex: 1;
+  font-size: $font-md;
+  font-weight: 600;
+  color: $color-text-primary;
+}
+
+.wordCn {
+  font-size: $font-sm;
+  color: $color-text-hint;
+}
+
+.wordStatus {
+  font-size: $font-md;
+}
+
+.wordDetail {
+  margin-top: $spacing-sm;
+  padding-top: $spacing-sm;
+  border-top: 1rpx dashed $color-border;
+}
+
+.answerRow {
+  display: flex;
+  gap: $spacing-xs;
+  margin-bottom: 4rpx;
+}
+
+.answerLabel {
+  font-size: $font-xs;
+  color: $color-text-hint;
+}
+
+.wrongText {
+  font-size: $font-xs;
+  color: $color-danger;
+  font-weight: 600;
+  text-decoration: line-through;
+}
+
+.correctText {
+  font-size: $font-xs;
+  color: $color-success;
+  font-weight: 600;
+}
+
+// ===== 按钮 =====
+.actions {
+  width: 100%;
+  display: flex;
+  gap: $spacing-md;
+  margin-top: $spacing-md;
+}
+
+.actionBtn {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-lg;
+  font-size: $font-md;
+  font-weight: 600;
+  transition: all 0.25s ease;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.backBtn {
+  background: $color-bg-stripe;
+  color: $color-text-secondary;
+}
+
+.retryBtn {
+  background: linear-gradient(135deg, $color-english, color.adjust($color-english, $lightness: 10%));
+  color: $color-text-white;
+  box-shadow: 0 4rpx 16rpx rgba($color-english, 0.3);
 }

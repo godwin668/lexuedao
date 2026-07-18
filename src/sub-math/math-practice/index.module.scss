@@ -1,8 +1,192 @@
+@use 'sass:color';
+@use '@/styles/variables.scss' as *;
+
 .page {
   min-height: 100vh;
+  background: $color-bg-page;
+  display: flex;
+  flex-direction: column;
+}
+
+.loading {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
-  color: #999;
+  font-size: $font-md;
+  color: $color-text-hint;
+}
+
+// ===== 顶部信息栏 =====
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  background: $color-bg-card;
+  box-shadow: $shadow-card;
+}
+
+.progressWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.progressBar {
+  flex: 1;
+  height: 8rpx;
+  background: $color-border;
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, $color-math, color.adjust($color-math, $lightness: 10%));
+  border-radius: 4rpx;
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  font-size: $font-xs;
+  color: $color-text-hint;
+  white-space: nowrap;
+}
+
+.timer {
+  font-size: $font-lg;
+  font-weight: 700;
+  color: $color-math;
+  min-width: 80rpx;
+  text-align: center;
+}
+
+.score {
+  font-size: $font-sm;
+  color: $color-success;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+// ===== 运算符筛选 =====
+.opFilter {
+  display: flex;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  background: $color-bg-card;
+}
+
+.opTab {
+  flex: 1;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-sm;
+  background: $color-bg-stripe;
+  font-size: $font-md;
+  color: $color-text-secondary;
+  font-weight: 600;
+  transition: all 0.25s ease;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.opActive {
+  background: linear-gradient(135deg, $color-math, color.adjust($color-math, $lightness: 10%));
+  color: #fff;
+}
+
+// ===== 题目数量 =====
+.countRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 0 $spacing-lg $spacing-md;
+  background: $color-bg-card;
+}
+
+.countLabel {
+  font-size: $font-sm;
+  color: $color-text-secondary;
+  white-space: nowrap;
+}
+
+.countTag {
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-sm;
+  background: $color-bg-stripe;
+  font-size: $font-sm;
+  color: $color-text-secondary;
+  transition: all 0.25s ease;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.countActive {
+  background: $color-math;
+  color: #fff;
+  font-weight: 600;
+}
+
+// ===== 题目区域 =====
+.questionSection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+}
+
+.expression {
+  font-size: 64rpx;
+  font-weight: 700;
+  color: $color-text-primary;
+  text-align: center;
+}
+
+// ===== 选项区域 =====
+.optionsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  padding-bottom: calc($spacing-xl + env(safe-area-inset-bottom));
+}
+
+.optionBtn {
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  border: 3rpx solid $color-border;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: $color-text-primary;
+  box-shadow: $shadow-card;
+  transition: all 0.2s ease;
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+.optionCorrect {
+  background: rgba($color-success, 0.1);
+  border-color: $color-success;
+  color: $color-success;
+}
+
+.optionWrong {
+  background: rgba($color-danger, 0.1);
+  border-color: $color-danger;
+  color: $color-danger;
 }

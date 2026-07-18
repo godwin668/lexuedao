@@ -48,6 +48,10 @@ const HomePage: React.FC = () => {
     Taro.navigateTo({ url: '/sub-game/challenge/index' })
   }
 
+  const handleAiChat = () => {
+    Taro.navigateTo({ url: '/sub-game/ai-chat/index' })
+  }
+
   const gradeLabels: Record<GradeLevel, string> = {
     1: '一年级', 2: '二年级', 3: '三年级', 4: '四年级', 5: '五年级', 6: '六年级',
   }
@@ -136,6 +140,20 @@ const HomePage: React.FC = () => {
               <Text className={styles.subjectDesc}>{subj.desc}</Text>
             </View>
           ))}
+        </View>
+      </View>
+
+      {/* AI 学习助手 */}
+      <View className={styles.section}>
+        <View className={styles.aiCard} onClick={handleAiChat}>
+          <View className={styles.aiCardLeft}>
+            <Text className={styles.aiIcon}>🤖</Text>
+            <View className={styles.aiInfo}>
+              <Text className={styles.aiTitle}>AI 学习助手</Text>
+              <Text className={styles.aiDesc}>智能答疑 · 学习规划 · 错题分析</Text>
+            </View>
+          </View>
+          <Text className={styles.aiArrow}>›</Text>
         </View>
       </View>
 

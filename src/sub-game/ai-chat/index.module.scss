@@ -1,0 +1,171 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  display: flex;
+  flex-direction: column;
+}
+
+// ===== 头部 =====
+.header {
+  background: linear-gradient(135deg, $color-primary, $color-primary-light);
+  padding: $spacing-md $spacing-lg;
+  padding-top: calc($spacing-lg + env(safe-area-inset-top, 0));
+  color: #fff;
+}
+
+.title {
+  font-size: $font-xl;
+  font-weight: 700;
+  display: block;
+}
+
+.subtitle {
+  font-size: $font-sm;
+  opacity: 0.85;
+  margin-top: 4rpx;
+  display: block;
+}
+
+.subjectTabs {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+}
+
+.subjectTab {
+  padding: 6rpx 24rpx;
+  border-radius: 20rpx;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: $font-sm;
+  transition: all 0.2s;
+}
+
+.subjectTabActive {
+  background: #fff;
+  color: $color-primary;
+  font-weight: 600;
+}
+
+// ===== 消息列表 =====
+.messageList {
+  flex: 1;
+  padding: $spacing-md;
+  overflow-y: auto;
+}
+
+.messageRow {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: $spacing-md;
+}
+
+.messageRowLeft {
+  align-items: flex-start;
+}
+
+.messageRowRight {
+  align-items: flex-end;
+}
+
+.bubble {
+  max-width: 80%;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-lg;
+  word-break: break-all;
+}
+
+.bubbleAi {
+  background: #E8F4FD;
+  border-top-left-radius: $radius-xs;
+}
+
+.bubbleUser {
+  background: $color-primary;
+  border-top-right-radius: $radius-xs;
+}
+
+.bubbleText {
+  font-size: $font-md;
+  line-height: 1.6;
+}
+
+.bubbleAi .bubbleText {
+  color: $color-text-primary;
+}
+
+.bubbleUser .bubbleText {
+  color: #fff;
+}
+
+.timeText {
+  font-size: $font-xs;
+  color: $color-text-hint;
+  margin-top: 4rpx;
+  padding: 0 $spacing-xs;
+}
+
+.typingDots {
+  font-size: $font-md;
+  color: $color-text-hint;
+  letter-spacing: 4rpx;
+}
+
+// ===== 快捷问题 =====
+.quickQuestions {
+  display: flex;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  overflow-x: auto;
+  white-space: nowrap;
+  background: $color-bg-card;
+  border-top: 1rpx solid $color-border;
+}
+
+.quickItem {
+  flex-shrink: 0;
+  padding: 8rpx 20rpx;
+  background: $color-bg-stripe;
+  border-radius: 20rpx;
+  border: 1rpx solid $color-border;
+}
+
+.quickText {
+  font-size: $font-sm;
+  color: $color-text-secondary;
+}
+
+// ===== 输入区 =====
+.inputArea {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  padding-bottom: calc($spacing-sm + $safe-bottom);
+  background: $color-bg-card;
+  border-top: 1rpx solid $color-border;
+}
+
+.input {
+  flex: 1;
+  height: 72rpx;
+  padding: 0 $spacing-md;
+  background: $color-bg-stripe;
+  border-radius: 36rpx;
+  font-size: $font-md;
+}
+
+.sendBtn {
+  width: 120rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  background: $color-primary;
+  color: #fff;
+  font-size: $font-md;
+  font-weight: 600;
+  border-radius: 36rpx;
+  border: none;
+  padding: 0;
+  text-align: center;
+}

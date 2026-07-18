@@ -1,8 +1,238 @@
+@use 'sass:color';
+@use '@/styles/variables.scss' as *;
+
 .page {
   min-height: 100vh;
+  background: $color-bg-page;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-xl $spacing-lg;
+  padding-bottom: calc($spacing-xl + env(safe-area-inset-bottom));
+}
+
+// ===== 分数圆环 =====
+.scoreCircle {
+  width: 260rpx;
+  height: 260rpx;
+  border-radius: $radius-round;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-lg;
+
+  &.excellent {
+    background: linear-gradient(135deg, #73D13D, #95DE64);
+    box-shadow: 0 8rpx 24rpx rgba(115, 209, 61, 0.35);
+  }
+
+  &.good {
+    background: linear-gradient(135deg, $color-math, color.adjust($color-math, $lightness: 10%));
+    box-shadow: 0 8rpx 24rpx rgba($color-math, 0.35);
+  }
+
+  &.fair {
+    background: linear-gradient(135deg, $color-warning, color.adjust($color-warning, $lightness: 10%));
+    box-shadow: 0 8rpx 24rpx rgba($color-warning, 0.35);
+  }
+
+  &.poor {
+    background: linear-gradient(135deg, $color-danger, #FF9E9E);
+    box-shadow: 0 8rpx 24rpx rgba($color-danger, 0.35);
+  }
+}
+
+.scoreValue {
+  font-size: 72rpx;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.scoreLabel {
+  font-size: $font-sm;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: $spacing-xs;
+}
+
+.encourage {
+  font-size: $font-xl;
+  font-weight: 600;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xl;
+}
+
+// ===== 统计详情 =====
+.statsSection {
+  width: 100%;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.statRow {
+  display: flex;
+  justify-content: space-around;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.statValue {
+  font-size: $font-xl;
+  font-weight: 700;
+  color: $color-math;
+}
+
+.statLabel {
+  font-size: $font-xs;
+  color: $color-text-hint;
+}
+
+// ===== 答题详情 =====
+.detailSection {
+  width: 100%;
+  flex: 1;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.detailTitle {
+  font-size: $font-md;
+  font-weight: 600;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: block;
+}
+
+.detailList {
+  flex: 1;
+  min-height: 0;
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm 0;
+  border-bottom: 1rpx solid $color-border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.itemCorrect {
+  .itemIndex {
+    background: rgba($color-success, 0.15);
+    color: $color-success;
+  }
+}
+
+.itemWrong {
+  .itemIndex {
+    background: rgba($color-danger, 0.15);
+    color: $color-danger;
+  }
+}
+
+.itemLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.itemIndex {
+  width: 40rpx;
+  height: 40rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
-  color: #999;
+  border-radius: $radius-round;
+  font-size: $font-xs;
+  font-weight: 600;
+}
+
+.itemExpr {
+  font-size: $font-md;
+  color: $color-text-primary;
+  font-weight: 500;
+}
+
+.itemRight {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.userAnswer {
+  font-size: $font-md;
+  color: $color-danger;
+  text-decoration: line-through;
+}
+
+.correctAnswer {
+  font-size: $font-md;
+  color: $color-success;
+  font-weight: 600;
+}
+
+.emptyDetail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+}
+
+.emptyText {
+  font-size: $font-sm;
+  color: $color-text-hint;
+}
+
+// ===== 底部按钮 =====
+.actions {
+  width: 100%;
+  display: flex;
+  gap: $spacing-md;
+}
+
+.actionBtn {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50rpx;
+  font-size: $font-md;
+  font-weight: 600;
+  transition: all 0.25s ease;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.backBtn {
+  background: $color-bg-stripe;
+  color: $color-text-secondary;
+}
+
+.retryBtn {
+  background: linear-gradient(135deg, $color-math, color.adjust($color-math, $lightness: 10%));
+  color: #fff;
 }

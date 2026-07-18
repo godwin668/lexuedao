@@ -1,8 +1,207 @@
+@use 'sass:color';
+@use '@/styles/variables.scss' as *;
+
 .page {
   min-height: 100vh;
+  background: $color-bg-page;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-lg;
+  padding-bottom: calc($spacing-xl + env(safe-area-inset-bottom));
+}
+
+// ===== 进度条 =====
+.progressBar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+}
+
+.progressTrack {
+  flex: 1;
+  height: 12rpx;
+  background: $color-border;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, $color-english, color.adjust($color-english, $lightness: 10%));
+  border-radius: 6rpx;
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  font-size: $font-sm;
+  color: $color-text-hint;
+  min-width: 80rpx;
+  text-align: right;
+}
+
+// ===== 闪卡 =====
+.cardWrapper {
+  width: 100%;
+  height: 480rpx;
+  perspective: 1000rpx;
+  margin-bottom: $spacing-lg;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 0.5s ease;
+  transform-style: preserve-3d;
+
+  &.flipped {
+    transform: rotateY(180deg);
+  }
+}
+
+.cardFront,
+.cardBack {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: $radius-lg;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: $shadow-card;
+}
+
+.cardFront {
+  background: linear-gradient(135deg, $color-english, color.adjust($color-english, $lightness: 10%));
+  color: #fff;
+}
+
+.cardBack {
+  background: $color-bg-card;
+  transform: rotateY(180deg);
+  border: 3rpx solid $color-english;
+}
+
+.wordText {
+  font-size: 80rpx;
+  font-weight: 700;
+  letter-spacing: 4rpx;
+}
+
+.tapHint {
+  font-size: $font-sm;
+  opacity: 0.7;
+  margin-top: $spacing-md;
+}
+
+.cnText {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: $color-text-primary;
+}
+
+.phoneticText {
+  font-size: $font-md;
+  color: $color-text-hint;
+  margin-top: $spacing-sm;
+}
+
+// ===== 发音按钮 =====
+.speakBtn {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-lg;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+}
+
+.speakIcon {
+  font-size: 36rpx;
+}
+
+.speakText {
+  font-size: $font-sm;
+  color: $color-text-secondary;
+}
+
+// ===== 导航按钮 =====
+.navButtons {
+  width: 100%;
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.navBtn {
+  flex: 1;
+  height: 72rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
-  color: #999;
+  border-radius: $radius-md;
+  font-size: $font-md;
+  font-weight: 500;
+  background: $color-bg-card;
+  color: $color-text-secondary;
+  box-shadow: $shadow-card;
+  transition: all 0.25s ease;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+
+  &.disabled {
+    opacity: 0.4;
+  }
+}
+
+// ===== 认识/不认识按钮 =====
+.actionButtons {
+  width: 100%;
+  display: flex;
+  gap: $spacing-md;
+}
+
+.actionBtn {
+  flex: 1;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-lg;
+  font-size: $font-lg;
+  font-weight: 600;
+  color: #fff;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
+  transition: all 0.25s ease;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.97);
+  }
+}
+
+.unknownBtn {
+  background: linear-gradient(135deg, $color-danger, #FF7875);
+}
+
+.knownBtn {
+  background: linear-gradient(135deg, $color-success, #73D13D);
+}
+
+// ===== 完成提示 =====
+.completeHint {
+  margin-top: $spacing-lg;
+  font-size: $font-lg;
+  font-weight: 600;
+  color: $color-english;
 }
