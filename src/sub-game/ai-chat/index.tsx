@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { View, Text, ScrollView, Input, Button } from '@tarojs/components'
 import { aiChat } from '@/services/api'
-import { useSafeArea } from '@/hooks/useSafeArea'
 import styles from './index.module.scss'
 
 interface Message {
@@ -32,7 +31,6 @@ const MOCK_REPLIES: Record<string, string> = {
 }
 
 const AiChatPage: React.FC = () => {
-  const { top: safeTop } = useSafeArea()
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 0,
@@ -115,7 +113,7 @@ const AiChatPage: React.FC = () => {
   }, [inputValue, sendMessage])
 
   return (
-    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
+    <View className={styles.page}>
       {/* 头部 */}
       <View className={styles.header}>
         <Text className={styles.title}>AI 学习助手</Text>

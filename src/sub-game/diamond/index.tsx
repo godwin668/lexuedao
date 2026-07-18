@@ -3,7 +3,6 @@ import { View, Text, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useUserStore } from '@/store/useUserStore'
 import { createPaymentOrder } from '@/services/api'
-import { useSafeArea } from '@/hooks/useSafeArea'
 import styles from './index.module.scss'
 
 interface DiamondPackage {
@@ -21,7 +20,6 @@ const PACKAGES: DiamondPackage[] = [
 ]
 
 const DiamondPage: React.FC = () => {
-  const { top: safeTop } = useSafeArea()
   const { gameProfile } = useUserStore()
   const [selectedPackage, setSelectedPackage] = useState('diamond_180')
   const [loading, setLoading] = useState(false)
@@ -40,7 +38,7 @@ const DiamondPage: React.FC = () => {
   }, [selectedPackage])
 
   return (
-    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
+    <View className={styles.page}>
       {/* 头部 */}
       <View className={styles.header}>
         <Text className={styles.title}>💎 钻石商城</Text>

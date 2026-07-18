@@ -24,11 +24,11 @@ const HanziHomePage: React.FC = () => {
   }
 
   const handleTrace = () => {
-    Taro.navigateTo({ url: '/sub-hanzi/hanzi-trace/index' })
+    Taro.navigateTo({ url: '/sub-hanzi/hanzi-practice/index' })
   }
 
   const handleTest = () => {
-    Taro.navigateTo({ url: '/sub-hanzi/hanzi-test/index' })
+    Taro.navigateTo({ url: '/sub-hanzi/hanzi-practice/index' })
   }
 
   const handleHistory = () => {

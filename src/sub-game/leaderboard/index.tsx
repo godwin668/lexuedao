@@ -5,7 +5,6 @@ import { useGameStore } from '@/store/useGameStore'
 import { useUserStore } from '@/store/useUserStore'
 import { getLeaderboard } from '@/services/api'
 import type { LeaderboardEntry } from '@/types'
-import { useSafeArea } from '@/hooks/useSafeArea'
 import styles from './index.module.scss'
 
 const SUBJECTS = [
@@ -24,7 +23,6 @@ const SCOPES: { key: 'school' | 'national' | 'friends'; label: string }[] = [
 const PAGE_SIZE = 20
 
 const LeaderboardPage: React.FC = () => {
-  const { top: safeTop } = useSafeArea()
   const { leaderboard, setLeaderboard } = useGameStore()
   const { user } = useUserStore()
 
@@ -102,7 +100,7 @@ const LeaderboardPage: React.FC = () => {
   const isMe = (entry: LeaderboardEntry) => user?.id === entry.userId
 
   return (
-    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
+    <View className={styles.page}>
       {/* 头部 */}
       <View className={styles.header}>
         <Text className={styles.title}>🏆 排行榜</Text>

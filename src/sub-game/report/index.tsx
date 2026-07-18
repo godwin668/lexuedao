@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { View, Text } from '@tarojs/components'
 import { useUserStore } from '@/store/useUserStore'
 import { getLearningReport } from '@/services/api'
-import { useSafeArea } from '@/hooks/useSafeArea'
 import styles from './index.module.scss'
 
 interface ReportData {
@@ -19,6 +18,12 @@ const SUBJECT_LABELS: Record<string, string> = {
   hanzi: '语文',
   math: '数学',
   english: '英语',
+}
+
+const SUBJECT_COLORS: Record<string, string> = {
+  hanzi: '#47B881',
+  math: '#FF8C42',
+  english: '#7C5CFC',
 }
 
 const MOCK_REPORT: ReportData = {
@@ -40,8 +45,25 @@ const MOCK_REPORT: ReportData = {
   ],
 }
 
+function mapCloudReport(data: any): ReportData {
+  const summary = data.summary || data
+  const rawDistribution = data.subjectDistribution || []
+  return {
+    totalPractices: summary.totalPractices || 0,
+    totalDuration: summary.totalDuration || 0,
+    avgAccuracy: summary.avgAccuracy || 0,
+    subjectDistribution: rawDistribution.map((item: any) => ({
+      subject: item.subject,
+      count: item.count || 0,
+      color: SUBJECT_COLORS[item.subject] || '#999',
+    })),
+    weakPoints: data.weakPoints || [],
+    streakDays: data.streakDays || 0,
+    recommendations: data.recommendations || [],
+  }
+}
+
 const ReportPage: React.FC = () => {
-  const { top: safeTop } = useSafeArea()
   const { viewingChildId, currentRole } = useUserStore()
   const [period, setPeriod] = useState<'week' | 'month'>('week')
   const [report, setReport] = useState<ReportData | null>(null)
@@ -54,8 +76,8 @@ const ReportPage: React.FC = () => {
         childId: currentRole === 'parent' ? (viewingChildId || undefined) : undefined,
         period,
       })
-      if (res && res.totalPractices !== undefined) {
-        setReport(res)
+      if (res) {
+        setReport(mapCloudReport(res))
       } else {
         setReport(MOCK_REPORT)
       }
@@ -82,7 +104,7 @@ const ReportPage: React.FC = () => {
   }
 
   return (
-    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
+    <View className={styles.page}>
       {/* 头部 */}
       <View className={styles.header}>
         <Text className={styles.title}>📊 学习报告</Text>

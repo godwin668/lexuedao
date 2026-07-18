@@ -4,7 +4,6 @@ import Taro from '@tarojs/taro'
 import { useGameStore } from '@/store/useGameStore'
 import { useUserStore } from '@/store/useUserStore'
 import { startBattle, submitBattleAnswer, getBattleResult } from '@/services/api'
-import { useSafeArea } from '@/hooks/useSafeArea'
 import styles from './index.module.scss'
 
 const SUBJECTS = [
@@ -32,7 +31,6 @@ const MOCK_QUESTIONS = [
 ]
 
 const BattlePage: React.FC = () => {
-  const { top: safeTop } = useSafeArea()
   const { battleStatus, battleRoomId, setBattleStatus, setBattleRoomId } = useGameStore()
   const { user, gameProfile } = useUserStore()
 
@@ -163,7 +161,7 @@ const BattlePage: React.FC = () => {
   const won = result && user ? result.winnerId === user.id : false
 
   return (
-    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
+    <View className={styles.page}>
       {/* 头部 */}
       <View className={styles.header}>
         <Text className={styles.title}>⚔️ 好友对战</Text>
