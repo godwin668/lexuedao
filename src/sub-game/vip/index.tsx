@@ -3,6 +3,7 @@ import { View, Text, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useUserStore } from '@/store/useUserStore'
 import { createPaymentOrder } from '@/services/api'
+import { useSafeArea } from '@/hooks/useSafeArea'
 import styles from './index.module.scss'
 
 interface PlanItem {
@@ -44,7 +45,8 @@ const PLANS: PlanItem[] = [
 ]
 
 const VipPage: React.FC = () => {
-  const { isVip, vipExpireDate } = useUserStore()
+  const { top: safeTop } = useSafeArea()
+  const { isVip, vipExpireDate, gameProfile } = useUserStore()
   const [selectedPlan, setSelectedPlan] = useState('yearly')
   const [loading, setLoading] = useState(false)
 
@@ -66,7 +68,7 @@ const VipPage: React.FC = () => {
   }, [selectedPlan, isVip])
 
   return (
-    <View className={styles.page}>
+    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
       {/* 头部 */}
       <View className={styles.header}>
         <Text className={styles.title}>⭐ VIP 会员</Text>

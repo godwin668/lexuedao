@@ -3,6 +3,7 @@ import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useEnglishStore } from '@/store/useEnglishStore'
 import { GradeLevel } from '@/types'
+import { useSafeArea } from '@/hooks/useSafeArea'
 import styles from './index.module.scss'
 
 const ENTRIES = [
@@ -15,6 +16,7 @@ const ENTRIES = [
 const GRADES = [1, 2, 3, 4, 5, 6] as GradeLevel[]
 
 const EngHomePage: React.FC = () => {
+  const { top: safeTop } = useSafeArea()
   const { currentGrade, setCurrentGrade, setMode } = useEnglishStore()
 
   const handleEntry = (mode: 'flashcard' | 'spell' | 'listen' | 'test') => {
@@ -29,7 +31,7 @@ const EngHomePage: React.FC = () => {
   }
 
   return (
-    <View className={styles.page}>
+    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
       {/* 头部 */}
       <View className={styles.header}>
         <Text className={styles.title}>🔤 英语冒险</Text>

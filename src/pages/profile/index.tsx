@@ -5,9 +5,11 @@ import { useUserStore } from '@/store/useUserStore'
 import { useGameStore } from '@/store/useGameStore'
 import { getStats } from '@/services/api'
 import { UserRole, GradeLevel, StatsData } from '@/types'
+import { useSafeArea } from '@/hooks/useSafeArea'
 import styles from './index.module.scss'
 
 const ProfilePage: React.FC = () => {
+  const { top: safeTop } = useSafeArea()
   const {
     user, gameProfile, currentRole, setCurrentRole,
     isVip, vipExpireDate, currentGrade, setCurrentGrade,
@@ -70,7 +72,7 @@ const ProfilePage: React.FC = () => {
   const weekDays = ['一', '二', '三', '四', '五', '六', '日']
 
   return (
-    <View className={styles.page}>
+    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
       {/* 用户信息 */}
       <View className={styles.header}>
         <View className={styles.avatar}>

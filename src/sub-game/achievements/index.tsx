@@ -3,6 +3,7 @@ import { View, Text } from '@tarojs/components'
 import classnames from 'classnames'
 import { useGameStore } from '@/store/useGameStore'
 import { Subject } from '@/types'
+import { useSafeArea } from '@/hooks/useSafeArea'
 import styles from './index.module.scss'
 
 type FilterKey = 'all' | 'general' | Subject
@@ -23,6 +24,7 @@ const SUBJECT_COLORS: Record<string, string> = {
 }
 
 const AchievementsPage: React.FC = () => {
+  const { top: safeTop } = useSafeArea()
   const { achievements, userAchievements } = useGameStore()
   const [filter, setFilter] = useState<FilterKey>('all')
 
@@ -39,7 +41,7 @@ const AchievementsPage: React.FC = () => {
   const totalCount = achievements.length
 
   return (
-    <View className={styles.page}>
+    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
       {/* 头部 */}
       <View className={styles.header}>
         <Text className={styles.title}>成就殿堂</Text>

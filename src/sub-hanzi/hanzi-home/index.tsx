@@ -3,6 +3,7 @@ import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useUserStore } from '@/store/useUserStore'
 import { useHanziStore } from '@/store/useHanziStore'
+import { useSafeArea } from '@/hooks/useSafeArea'
 import styles from './index.module.scss'
 
 const LEVELS = [
@@ -14,6 +15,7 @@ const LEVELS = [
 ]
 
 const HanziHomePage: React.FC = () => {
+  const { top: safeTop } = useSafeArea()
   const { gameProfile } = useUserStore()
   const { currentGrade, setCurrentGrade } = useHanziStore()
 
@@ -34,7 +36,7 @@ const HanziHomePage: React.FC = () => {
   }
 
   return (
-    <View className={styles.page}>
+    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
       {/* 头部 */}
       <View className={styles.header}>
         <Text className={styles.title}>📝 语文冒险</Text>

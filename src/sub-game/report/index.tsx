@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { View, Text } from '@tarojs/components'
 import { useUserStore } from '@/store/useUserStore'
 import { getLearningReport } from '@/services/api'
+import { useSafeArea } from '@/hooks/useSafeArea'
 import styles from './index.module.scss'
 
 interface ReportData {
@@ -40,6 +41,7 @@ const MOCK_REPORT: ReportData = {
 }
 
 const ReportPage: React.FC = () => {
+  const { top: safeTop } = useSafeArea()
   const { viewingChildId, currentRole } = useUserStore()
   const [period, setPeriod] = useState<'week' | 'month'>('week')
   const [report, setReport] = useState<ReportData | null>(null)
@@ -80,7 +82,7 @@ const ReportPage: React.FC = () => {
   }
 
   return (
-    <View className={styles.page}>
+    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
       {/* 头部 */}
       <View className={styles.header}>
         <Text className={styles.title}>📊 学习报告</Text>

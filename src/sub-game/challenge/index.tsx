@@ -5,6 +5,7 @@ import { useGameStore } from '@/store/useGameStore'
 import { useUserStore } from '@/store/useUserStore'
 import { getDailyChallenge } from '@/services/api'
 import type { DailyChallenge } from '@/types'
+import { useSafeArea } from '@/hooks/useSafeArea'
 import styles from './index.module.scss'
 
 interface TaskItem {
@@ -18,6 +19,7 @@ interface TaskItem {
 }
 
 const ChallengePage: React.FC = () => {
+  const { top: safeTop } = useSafeArea()
   const { dailyChallenge, setDailyChallenge } = useGameStore()
   const { gameProfile } = useUserStore()
 
@@ -93,7 +95,7 @@ const ChallengePage: React.FC = () => {
   }, [allCompleted, claimed])
 
   return (
-    <View className={styles.page}>
+    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
       {/* 头部 */}
       <View className={styles.header}>
         <Text className={styles.title}>📅 每日挑战</Text>

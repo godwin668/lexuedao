@@ -4,6 +4,7 @@ import Taro from '@tarojs/taro'
 import { useUserStore } from '@/store/useUserStore'
 import { useMathStore } from '@/store/useMathStore'
 import { GradeLevel } from '@/types'
+import { useSafeArea } from '@/hooks/useSafeArea'
 import styles from './index.module.scss'
 
 const ENTRY_CARDS = [
@@ -16,6 +17,7 @@ const ENTRY_CARDS = [
 const GRADES: GradeLevel[] = [1, 2, 3, 4, 5, 6]
 
 const MathHomePage: React.FC = () => {
+  const { top: safeTop } = useSafeArea()
   const { gameProfile } = useUserStore()
   const { currentGrade, setCurrentGrade } = useMathStore()
 
@@ -34,7 +36,7 @@ const MathHomePage: React.FC = () => {
   }
 
   return (
-    <View className={styles.page}>
+    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
       {/* 头部 */}
       <View className={styles.header}>
         <Text className={styles.title}>🧮 数学冒险</Text>

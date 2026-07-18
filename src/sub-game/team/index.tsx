@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react'
 import { View, Text, Input, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useUserStore } from '@/store/useUserStore'
+import { useSafeArea } from '@/hooks/useSafeArea'
 import styles from './index.module.scss'
 
 interface TeamMember {
@@ -21,6 +22,7 @@ interface TeamInfo {
 }
 
 const TeamPage: React.FC = () => {
+  const { top: safeTop } = useSafeArea()
   const { user, gameProfile } = useUserStore()
 
   const [team, setTeam] = useState<TeamInfo | null>(null)
@@ -122,7 +124,7 @@ const TeamPage: React.FC = () => {
   const progressPercent = team ? Math.round((team.currentStage / team.totalStages) * 100) : 0
 
   return (
-    <View className={styles.page}>
+    <View className={styles.page} style={{ paddingTop: `${safeTop}px` }}>
       {/* 头部 */}
       <View className={styles.header}>
         <Text className={styles.title}>🤝 团队竞技</Text>

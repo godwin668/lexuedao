@@ -3,6 +3,7 @@ import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useUserStore } from '@/store/useUserStore'
 import { useGameStore } from '@/store/useGameStore'
+import { useSafeArea } from '@/hooks/useSafeArea'
 import { Subject, GradeLevel } from '@/types'
 import styles from './index.module.scss'
 
@@ -15,6 +16,7 @@ const SUBJECTS: { key: Subject; name: string; icon: string; color: string; desc:
 const HomePage: React.FC = () => {
   const { user, gameProfile, currentRole, currentGrade, setCurrentGrade, isVip } = useUserStore()
   const { dailyChallenge } = useGameStore()
+  const { top: safeTop } = useSafeArea()
   const [greeting, setGreeting] = useState('')
 
   useEffect(() => {
@@ -59,7 +61,7 @@ const HomePage: React.FC = () => {
   return (
     <View className={styles.page}>
       {/* 头部 */}
-      <View className={styles.header}>
+      <View className={styles.header} style={{ paddingTop: `${safeTop}px` }}>
         <View className={styles.userRow}>
           <View className={styles.avatar}>
             <Text>{user?.avatarUrl || '😊'}</Text>
