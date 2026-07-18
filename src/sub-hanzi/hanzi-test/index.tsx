@@ -89,29 +89,27 @@ const TestPage: React.FC = () => {
       userStrokes: [...userStrokes],
     });
 
-    try {
-      await savePracticeRecord({
-        subject: 'hanzi',
-        type: 'test',
-        grade: useHanziStore.getState().currentGrade,
-        contentJson: {
-          characters: selectedCharacters.map((c) => c.char),
-          scores: finalScores,
-          avgAccuracy: Math.round(avgAccuracy),
-          totalTime: timer,
-        },
-        score: Math.round(avgAccuracy),
-        accuracy: Math.round(avgAccuracy),
-        duration: timer,
-      });
-      // 更新段位分
-      updateRank({ subject: 'hanzi', score: Math.round(avgAccuracy) }).catch(() => {})
-    } catch (err) {
-      console.error('[TestPage] submit error:', err);
-    }
     Taro.redirectTo({
       url: `/sub-hanzi/hanzi-result/index?score=${Math.round(avgAccuracy)}&accuracy=${Math.round(avgAccuracy)}&aesthetics=${Math.round(avgAccuracy)}&char=${selectedCharacters.map(c => c.char).join('')}&isTest=1`,
     });
+
+    savePracticeRecord({
+      subject: 'hanzi',
+      type: 'test',
+      grade: useHanziStore.getState().currentGrade,
+      contentJson: {
+        characters: selectedCharacters.map((c) => c.char),
+        scores: finalScores,
+        avgAccuracy: Math.round(avgAccuracy),
+        totalTime: timer,
+      },
+      score: Math.round(avgAccuracy),
+      accuracy: Math.round(avgAccuracy),
+      duration: timer,
+    }).catch((err) => {
+      console.error('[TestPage] savePracticeRecord error:', err);
+    });
+    updateRank({ subject: 'hanzi', score: Math.round(avgAccuracy) }).catch(() => {});
   };
 
   const formatTime = (s: number) => {

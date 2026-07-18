@@ -190,27 +190,27 @@ const WritePage: React.FC = () => {
       userStrokes: [...userStrokes],
     });
 
-    try {
-      await savePracticeRecord({
-        subject: 'hanzi',
-        type: 'free',
-        grade: useHanziStore.getState().currentGrade,
-        contentJson: {
-          character: currentChar?.char || '',
-          strokes: userStrokes,
-          aesthetics,
-        },
-        score,
-        accuracy,
-        duration: 30,
-      });
-      updateRank({ subject: 'hanzi', score }).catch(() => {})
-    } catch (err) {
-      console.error('[WritePage] submit error:', err);
-    }
+    // 先跳转结果页，后台异步保存记录，避免用户长时间等待
     Taro.navigateTo({
       url: `/sub-hanzi/hanzi-result/index?score=${score}&accuracy=${accuracy}&aesthetics=${aesthetics}&char=${currentChar?.char}`,
     });
+
+    savePracticeRecord({
+      subject: 'hanzi',
+      type: 'free',
+      grade: useHanziStore.getState().currentGrade,
+      contentJson: {
+        character: currentChar?.char || '',
+        strokes: userStrokes,
+        aesthetics,
+      },
+      score,
+      accuracy,
+      duration: 30,
+    }).catch((err) => {
+      console.error('[WritePage] savePracticeRecord error:', err);
+    });
+    updateRank({ subject: 'hanzi', score }).catch(() => {});
   };
 
   if (!currentChar) return null;

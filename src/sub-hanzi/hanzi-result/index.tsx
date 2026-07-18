@@ -208,13 +208,13 @@ const ResultPage: React.FC = () => {
             <View className={styles.compareGrid}>
               <View className={styles.compareItem}>
                 <View className={classnames(styles.compareChar, styles.yourChar)}>
-                  {userCanvasReady ? (
-                    <Canvas
-                      id="userStrokeCanvas"
-                      type="2d"
-                      className={styles.compareCanvas}
-                    />
-                  ) : (
+                  <Canvas
+                    id="userStrokeCanvas"
+                    type="2d"
+                    className={styles.compareCanvas}
+                    style={{ visibility: userCanvasReady ? 'visible' : 'hidden' }}
+                  />
+                  {!userCanvasReady && (
                     <Text className={styles.compareFallback}>{char || lastSessionData?.char || '?'}</Text>
                   )}
                 </View>
@@ -222,13 +222,13 @@ const ResultPage: React.FC = () => {
               </View>
               <View className={styles.compareItem}>
                 <View className={classnames(styles.compareChar, styles.standardChar)}>
-                  {stdCanvasReady ? (
-                    <Canvas
-                      id="stdStrokeCanvas"
-                      type="2d"
-                      className={styles.compareCanvas}
-                    />
-                  ) : (
+                  <Canvas
+                    id="stdStrokeCanvas"
+                    type="2d"
+                    className={styles.compareCanvas}
+                    style={{ visibility: stdCanvasReady ? 'visible' : 'hidden' }}
+                  />
+                  {!stdCanvasReady && (
                     <Text className={styles.compareFallback}>{char || lastSessionData?.char || '?'}</Text>
                   )}
                 </View>

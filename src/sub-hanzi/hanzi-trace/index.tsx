@@ -154,27 +154,26 @@ const TracePage: React.FC = () => {
       userStrokes: [...userStrokes],
     });
 
-    try {
-      await savePracticeRecord({
-        subject: 'hanzi',
-        type: 'trace',
-        grade: useHanziStore.getState().currentGrade,
-        contentJson: {
-          character: currentChar?.char || '',
-          strokes: userStrokes,
-          aesthetics,
-        },
-        score,
-        accuracy,
-        duration: 35,
-      });
-      updateRank({ subject: 'hanzi', score }).catch(() => {})
-    } catch (err) {
-      console.error('[TracePage] submit error:', err);
-    }
     Taro.navigateTo({
       url: `/sub-hanzi/hanzi-result/index?score=${score}&accuracy=${accuracy}&aesthetics=${aesthetics}&char=${currentChar?.char}`,
     });
+
+    savePracticeRecord({
+      subject: 'hanzi',
+      type: 'trace',
+      grade: useHanziStore.getState().currentGrade,
+      contentJson: {
+        character: currentChar?.char || '',
+        strokes: userStrokes,
+        aesthetics,
+      },
+      score,
+      accuracy,
+      duration: 35,
+    }).catch((err) => {
+      console.error('[TracePage] savePracticeRecord error:', err);
+    });
+    updateRank({ subject: 'hanzi', score }).catch(() => {});
   };
 
   if (!currentChar) return null;
