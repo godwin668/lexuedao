@@ -1,4 +1,5 @@
 export default definePageConfig({
   navigationBarTitleText: '语文冒险',
-  navigationStyle: 'custom',
+  navigationBarBackgroundColor: '#47B881',
+  navigationBarTextStyle: 'white',
 })
