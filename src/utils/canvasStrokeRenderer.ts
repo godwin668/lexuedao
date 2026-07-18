@@ -153,11 +153,12 @@ export function drawAllStrokeOutlines(
   const drawW = w - m * 2
   const drawH = h - m * 2
 
-  // 计算字的实际包围盒，用于居中
+  // 计算字的实际包围盒，用于居中（留 20% 内边距，不贴边）
+  const PADDING_RATIO = 0.8
   const bounds = calcStrokesBounds(strokes)
   const charW = bounds.maxX - bounds.minX || 1
   const charH = bounds.maxY - bounds.minY || 1
-  const charScale = Math.min(drawW / charW, drawH / charH)
+  const charScale = Math.min(drawW / charW, drawH / charH) * PADDING_RATIO
   const charOffsetX = (drawW - charW * charScale) / 2
   const charOffsetY = (drawH - charH * charScale) / 2
 
@@ -239,11 +240,12 @@ export class StrokeAnimationRenderer {
     const drawW = w - m * 2
     const drawH = h - m * 2
 
-    // 计算 medians 的实际包围盒，用于居中
+    // 计算 medians 的实际包围盒，用于居中（留 20% 内边距）
+    const PADDING_RATIO = 0.8
     const bounds = calcMediansBounds(this.medians)
     const charW = bounds.maxX - bounds.minX || 1
     const charH = bounds.maxY - bounds.minY || 1
-    const charScale = Math.min(drawW / charW, drawH / charH)
+    const charScale = Math.min(drawW / charW, drawH / charH) * PADDING_RATIO
     const charOffsetX = (drawW - charW * charScale) / 2
     const charOffsetY = (drawH - charH * charScale) / 2
 
