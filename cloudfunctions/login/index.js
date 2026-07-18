@@ -20,7 +20,10 @@ exports.main = async (event, context) => {
 
     // 查找或创建用户
     let result = await client.query(
-      'SELECT id, openid, nickname, avatar_url, role, grade, created_at, updated_at FROM users WHERE openid = $1',
+      `SELECT id, openid, nickname, avatar_url, role, grade,
+              is_vip, vip_expire_date, total_study_minutes,
+              created_at, updated_at
+       FROM users WHERE openid = $1`,
       [openid]
     )
 
@@ -28,7 +31,9 @@ exports.main = async (event, context) => {
       result = await client.query(
         `INSERT INTO users (openid, nickname, avatar_url, role, grade)
          VALUES ($1, '小朋友', '', 'student', 1)
-         RETURNING id, openid, nickname, avatar_url, role, grade, created_at, updated_at`,
+         RETURNING id, openid, nickname, avatar_url, role, grade,
+                   is_vip, vip_expire_date, total_study_minutes,
+                   created_at, updated_at`,
         [openid]
       )
 
@@ -45,6 +50,8 @@ exports.main = async (event, context) => {
       data: {
         openid,
         userId: result.rows[0].id,
+        isVip: result.rows[0].is_vip || false,
+        vipExpireDate: result.rows[0].vip_expire_date,
       },
     }
   } catch (err) {

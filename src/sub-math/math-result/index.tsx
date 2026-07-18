@@ -3,7 +3,7 @@ import { View, Text, ScrollView } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import classnames from 'classnames'
 import { useMathStore } from '@/store/useMathStore'
-import { savePracticeRecord } from '@/services/api'
+import { savePracticeRecord, updateRank } from '@/services/api'
 import styles from './index.module.scss'
 
 const MathResultPage: React.FC = () => {
@@ -63,6 +63,8 @@ const MathResultPage: React.FC = () => {
           accuracy: accuracyNum,
           duration: durationNum,
         })
+        // 更新段位分
+        updateRank({ subject: 'math', score: scoreNum }).catch(() => {})
       } catch (err) {
         console.error('[MathResult] save record error:', err)
       }

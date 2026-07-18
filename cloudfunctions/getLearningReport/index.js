@@ -122,6 +122,36 @@ exports.main = async (event, context) => {
 
     const stats = practiceStats.rows[0]
 
+    // 获取薄弱知识点
+    let weakPoints = []
+    try {
+      const weakResult = await client.query(
+        `SELECT item_key, error_count FROM error_book
+         WHERE user_id = $1 AND mastered = false
+         ORDER BY error_count DESC LIMIT 5`,
+        [targetUserId]
+      )
+      weakPoints = weakResult.rows.map(r => r.item_key)
+    } catch (_) {}
+
+    // 生成改进建议
+    const recommendations = []
+    if (parseInt(stats.avg_accuracy) < 70) {
+      recommendations.push('正确率偏低，建议从基础题开始，逐步提升难度')
+    }
+    if (parseInt(stats.total_count) < 10) {
+      recommendations.push('本周练习次数较少，建议每天至少完成一组练习')
+    }
+    if (weakPoints.length > 0) {
+      recommendations.push('错题本中有未掌握的题目，建议优先复习错题')
+    }
+    if (streakDays < 3) {
+      recommendations.push('连续打卡天数不足，坚持每天学习可获得额外奖励')
+    }
+    if (recommendations.length === 0) {
+      recommendations.push('表现不错！继续保持当前的学习节奏')
+    }
+
     return {
       code: 0,
       message: 'ok',
@@ -130,6 +160,8 @@ exports.main = async (event, context) => {
         userName,
         grade: userGrade,
         streakDays,
+        weakPoints,
+        recommendations,
         summary: {
           totalPractices: parseInt(stats.total_count) || 0,
           totalDuration: parseInt(stats.total_duration) || 0,

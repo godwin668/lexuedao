@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, Canvas } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useHanziStore } from '@/store/useHanziStore';
-import { savePracticeRecord } from '@/services/api';
+import { savePracticeRecord, updateRank } from '@/services/api';
 import { getStrokeData } from '@/data/strokeData';
 import { StrokeAnimationRenderer, drawGrid, drawAllStrokeOutlines } from '@/utils/canvasStrokeRenderer';
 import { evaluateCharacterScore } from '@/utils/strokeScoring';
@@ -168,6 +168,7 @@ const TracePage: React.FC = () => {
         accuracy,
         duration: 35,
       });
+      updateRank({ subject: 'hanzi', score }).catch(() => {})
     } catch (err) {
       console.error('[TracePage] submit error:', err);
     }

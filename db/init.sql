@@ -22,6 +22,25 @@ COMMENT ON COLUMN users.openid IS '微信openid';
 COMMENT ON COLUMN users.role IS '角色: student=学生, parent=家长';
 COMMENT ON COLUMN users.grade IS '年级 1-6';
 
+-- 新增字段（如已存在则忽略）
+DO $$ BEGIN
+  ALTER TABLE users ADD COLUMN IF NOT EXISTS total_study_minutes INT DEFAULT 0;
+EXCEPTION WHEN duplicate_column THEN NULL;
+END $$;
+COMMENT ON COLUMN users.total_study_minutes IS '累计学习时长(分钟)';
+
+DO $$ BEGIN
+  ALTER TABLE users ADD COLUMN IF NOT EXISTS is_vip BOOLEAN DEFAULT false;
+EXCEPTION WHEN duplicate_column THEN NULL;
+END $$;
+COMMENT ON COLUMN users.is_vip IS '是否VIP';
+
+DO $$ BEGIN
+  ALTER TABLE users ADD COLUMN IF NOT EXISTS vip_expire_date DATE;
+EXCEPTION WHEN duplicate_column THEN NULL;
+END $$;
+COMMENT ON COLUMN users.vip_expire_date IS 'VIP到期日期';
+
 CREATE TABLE IF NOT EXISTS parent_child (
   id          BIGSERIAL PRIMARY KEY,
   parent_id   BIGINT NOT NULL REFERENCES users(id),
@@ -99,6 +118,13 @@ CREATE INDEX IF NOT EXISTS idx_pr_user_subject_time ON practice_records(user_id,
 CREATE INDEX IF NOT EXISTS idx_pr_subject_type ON practice_records(subject, type);
 COMMENT ON TABLE practice_records IS '练习/测试记录表（通用）';
 COMMENT ON COLUMN practice_records.duration IS '耗时(秒)';
+
+-- 新增字段
+DO $$ BEGIN
+  ALTER TABLE practice_records ADD COLUMN IF NOT EXISTS rank_score INT DEFAULT 0;
+EXCEPTION WHEN duplicate_column THEN NULL;
+END $$;
+COMMENT ON COLUMN practice_records.rank_score IS '段位分，用于赛季排名';
 
 CREATE TABLE IF NOT EXISTS error_book (
   id            BIGSERIAL PRIMARY KEY,
@@ -253,3 +279,88 @@ INSERT INTO achievements (key, name, description, icon, subject, condition_json)
 
 -- 全科成就
 ('all_subject', '全科小状元', '三科都有练习记录', '🎓', 'general', '{"type":"all_subject","target":1}');
+
+-- ===== 段位系统 =====
+
+CREATE TABLE IF NOT EXISTS user_ranks (
+  id            BIGSERIAL PRIMARY KEY,
+  user_id       BIGINT NOT NULL REFERENCES users(id),
+  subject       VARCHAR(16) NOT NULL CHECK (subject IN ('hanzi','math','english')),
+  rank          VARCHAR(16) NOT NULL DEFAULT 'bronze' CHECK (rank IN ('bronze','silver','gold','platinum','diamond','king')),
+  season_score  INT DEFAULT 0,
+  season        VARCHAR(16) DEFAULT '2026-S1',
+  updated_at    TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (user_id, subject, season)
+);
+CREATE INDEX IF NOT EXISTS idx_ur_user_subject ON user_ranks(user_id, subject);
+CREATE INDEX IF NOT EXISTS idx_ur_rank ON user_ranks(rank, season_score DESC);
+COMMENT ON TABLE user_ranks IS '段位表（每学科独立段位，赛季制）';
+COMMENT ON COLUMN user_ranks.rank IS '段位: bronze/silver/gold/platinum/diamond/king';
+COMMENT ON COLUMN user_ranks.season_score IS '当前赛季段位分';
+COMMENT ON COLUMN user_ranks.season IS '赛季标识';
+
+-- ===== 学习报告 =====
+
+CREATE TABLE IF NOT EXISTS learning_reports (
+  id            BIGSERIAL PRIMARY KEY,
+  user_id       BIGINT NOT NULL REFERENCES users(id),
+  period        VARCHAR(16) NOT NULL CHECK (period IN ('daily','weekly','monthly')),
+  report_date   DATE NOT NULL,
+  subject       VARCHAR(16) CHECK (subject IN ('hanzi','math','english')),
+  practice_count INT DEFAULT 0,
+  test_count    INT DEFAULT 0,
+  total_duration INT DEFAULT 0,
+  avg_accuracy  INT DEFAULT 0,
+  exp_gained    INT DEFAULT 0,
+  coins_gained  INT DEFAULT 0,
+  weak_points   JSONB DEFAULT '[]',
+  suggestions   JSONB DEFAULT '[]',
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (user_id, period, report_date, subject)
+);
+CREATE INDEX IF NOT EXISTS idx_lr_user_date ON learning_reports(user_id, report_date);
+COMMENT ON TABLE learning_reports IS '学习报告缓存表';
+COMMENT ON COLUMN learning_reports.period IS '报告周期: daily/weekly/monthly';
+COMMENT ON COLUMN learning_reports.weak_points IS '薄弱知识点列表';
+COMMENT ON COLUMN learning_reports.suggestions IS '改进建议列表';
+
+-- ===== AI 对话记录 =====
+
+CREATE TABLE IF NOT EXISTS ai_conversations (
+  id            BIGSERIAL PRIMARY KEY,
+  user_id       BIGINT NOT NULL REFERENCES users(id),
+  subject       VARCHAR(16) CHECK (subject IN ('hanzi','math','english','general')),
+  role          VARCHAR(16) NOT NULL CHECK (role IN ('user','assistant')),
+  content       TEXT NOT NULL,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_aic_user_time ON ai_conversations(user_id, created_at);
+COMMENT ON TABLE ai_conversations IS 'AI对话记录表';
+COMMENT ON COLUMN ai_conversations.role IS '角色: user/assistant';
+COMMENT ON COLUMN ai_conversations.content IS '对话内容';
+
+-- ===== 组队系统 =====
+
+CREATE TABLE IF NOT EXISTS teams (
+  id            BIGSERIAL PRIMARY KEY,
+  name          VARCHAR(32) NOT NULL,
+  code          VARCHAR(8) NOT NULL UNIQUE,
+  captain_id    BIGINT NOT NULL REFERENCES users(id),
+  total_score   INT DEFAULT 0,
+  current_stage INT DEFAULT 1,
+  total_stages  INT DEFAULT 10,
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ DEFAULT NOW()
+);
+COMMENT ON TABLE teams IS '队伍表';
+COMMENT ON COLUMN teams.code IS '6位队伍码';
+
+CREATE TABLE IF NOT EXISTS team_members (
+  id        BIGSERIAL PRIMARY KEY,
+  team_id   BIGINT NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+  user_id   BIGINT NOT NULL REFERENCES users(id),
+  joined_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (user_id)
+);
+CREATE INDEX IF NOT EXISTS idx_tm_team ON team_members(team_id);
+COMMENT ON TABLE team_members IS '队伍成员表';

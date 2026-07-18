@@ -18,7 +18,9 @@ exports.main = async (event, context) => {
     await client.connect()
 
     const result = await client.query(
-      `SELECT id, openid, nickname, avatar_url, role, grade, created_at, updated_at
+      `SELECT id, openid, nickname, avatar_url, role, grade,
+              is_vip, vip_expire_date, total_study_minutes,
+              created_at, updated_at
        FROM users WHERE openid = $1`,
       [openid]
     )
@@ -38,6 +40,9 @@ exports.main = async (event, context) => {
         avatarUrl: row.avatar_url,
         role: row.role,
         grade: row.grade,
+        isVip: row.is_vip || false,
+        vipExpireDate: row.vip_expire_date,
+        totalStudyMinutes: row.total_study_minutes || 0,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
       },

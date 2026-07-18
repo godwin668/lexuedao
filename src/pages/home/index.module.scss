@@ -265,3 +265,30 @@
   font-size: $font-xl;
   color: $color-text-hint;
 }
+
+// ===== AI 学习建议 =====
+.tipsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.tipItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8rpx;
+  padding: 8rpx 0;
+}
+
+.tipDot {
+  color: #4A90D9;
+  font-size: $font-md;
+  line-height: 1.5;
+}
+
+.tipText {
+  font-size: $font-sm;
+  color: $color-text-secondary;
+  line-height: 1.5;
+  flex: 1;
+}

@@ -30,7 +30,7 @@ lexuedao/
 │   ├── store/              # Zustand 状态管理
 │   ├── types/              # TypeScript 类型定义
 │   └── styles/             # 全局样式变量
-├── cloudfunctions/         # 云函数（16个）
+├── cloudfunctions/         # 云函数（32个）
 ├── db/
 │   └── init.sql            # 数据库初始化脚本（14张表）
 ├── docs/
@@ -97,6 +97,7 @@ pnpm build:weapp
 | 变量 | 说明 | 配置位置 |
 |------|------|---------|
 | `PG_CONNECTION_STRING` | PostgreSQL 连接串 | CloudBase 控制台 → 云函数 → 环境变量 |
+| `DEEPSEEK_API_KEY` | DeepSeek API 密钥 | aiChat 云函数需要，用于 AI 对话 |
 | CloudBase 环境 ID | `lexuedao-d9gnk5dru823f8b98` | `src/app.tsx` |
 
 ## CloudBase 管理
@@ -121,14 +122,21 @@ pnpm build:weapp
 | 模块 | 状态 |
 |------|:--:|
 | 语文（书写/描红/测试/评分/历史） | ✅ 完成 |
-| 数学（4页） | 🔲 待开发 |
-| 英语（6页） | 🔲 待开发 |
-| 游戏化竞技（对战/排行/挑战/组队） | 🔲 待开发 |
-| 登录流程集成 | 🔲 待开发 |
-| 成就系统 UI | 🔲 待开发 |
-| 家长端（学习报告/多娃管理） | 🔲 待开发 |
-| 微信支付 / VIP 订阅 | 🔲 待开发 |
-| AI 学习推荐 | 🔲 待开发 |
+| 数学（练习/测试/结果） | ✅ 完成 |
+| 英语（闪卡/拼写/听力/测试/结果） | ✅ 完成 |
+| 游戏化竞技（对战/排行/挑战/组队） | ✅ 完成 |
+| 登录流程集成 | ✅ 完成 |
+| 成就系统 UI | ✅ 完成 |
+| 家长端（学习报告/多娃管理/绑定孩子） | ✅ 完成 |
+| AI 学习助手聊天 | ✅ 完成 |
+| AI 学习建议（薄弱分析+推荐） | ✅ 完成 |
+| 段位系统（三科段位分） | ✅ 完成 |
+| 微信支付 / VIP 订阅 | 🟡 前端完成，支付接口待接入 |
+| 钻石商城 | ✅ 完成 |
+| 错题本独立页面 | ✅ 完成 |
+| 拍照搜题/改错 | 🔲 待开发 |
+| 宠物/伙伴系统 | 🔲 待开发 |
+| 跨端 App（Taro RN） | 🔲 待开发 |
 
 详细规划见 [docs/DESIGN.md](docs/DESIGN.md)。
 
@@ -159,3 +167,11 @@ pnpm build:weapp
 | 排行榜 | `sub-game/leaderboard/index` |
 | 每日挑战 | `sub-game/challenge/index` |
 | 团队竞技 | `sub-game/team/index` |
+| 成就徽章 | `sub-game/achievements/index` |
+| AI 学习助手 | `sub-game/ai-chat/index` |
+| 学习报告 | `sub-game/report/index` |
+| VIP 订阅 | `sub-game/vip/index` |
+| 钻石商城 | `sub-game/diamond/index` |
+| 错题本 | `sub-game/error-book/index` |
+| 绑定孩子 | `sub-game/bind-child/index` |
+| 每日挑战 | `sub-game/challenge/index` |

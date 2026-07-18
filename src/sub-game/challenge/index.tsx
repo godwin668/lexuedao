@@ -3,7 +3,7 @@ import { View, Text, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useGameStore } from '@/store/useGameStore'
 import { useUserStore } from '@/store/useUserStore'
-import { getDailyChallenge } from '@/services/api'
+import { getDailyChallenge, claimDailyReward } from '@/services/api'
 import type { DailyChallenge } from '@/types'
 import styles from './index.module.scss'
 
@@ -86,10 +86,17 @@ const ChallengePage: React.FC = () => {
 
   const allCompleted = tasks.length > 0 && tasks.every((t) => t.completed >= t.target)
 
-  const handleClaimReward = useCallback(() => {
+  const handleClaimReward = useCallback(async () => {
     if (!allCompleted || claimed) return
-    setClaimed(true)
-    Taro.showToast({ title: '奖励领取成功！', icon: 'success' })
+    try {
+      const res = await claimDailyReward()
+      if (res) {
+        setClaimed(true)
+        Taro.showToast({ title: `领取成功！+${res.exp}经验 +${res.coins}金币`, icon: 'success' })
+      }
+    } catch (err: any) {
+      Taro.showToast({ title: err?.message || '领取失败', icon: 'none' })
+    }
   }, [allCompleted, claimed])
 
   return (

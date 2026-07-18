@@ -87,9 +87,9 @@ $color-error: $color-danger;
   box-shadow: $shadow-card;
   overflow: hidden;
   position: relative;
-  width: calc(100vw - #{$page-padding * 2} - #{$spacing-md * 2});
-  height: calc(100vw - #{$page-padding * 2} - #{$spacing-md * 2});
-  max-height: calc(100vh - 240rpx - #{$page-padding * 2} - #{$spacing-md * 2});
+  width: calc(100vw - #{$page-padding * 2});
+  aspect-ratio: 1;
+  max-height: calc(100vh - 380rpx);
 }
 
 .canvas {

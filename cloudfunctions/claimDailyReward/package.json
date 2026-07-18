@@ -1,0 +1,10 @@
+{
+  "name": "claimDailyReward",
+  "version": "1.0.0",
+  "description": "领取每日挑战奖励",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest",
+    "pg": "^8.11.0"
+  }
+}

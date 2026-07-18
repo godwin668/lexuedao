@@ -21,6 +21,9 @@ export interface User {
   avatarUrl: string
   role: UserRole
   grade: GradeLevel
+  isVip?: boolean
+  vipExpireDate?: string
+  totalStudyMinutes?: number
   createdAt: string
   updatedAt: string
 }
@@ -231,4 +234,16 @@ export interface DailyChallenge {
   mathTask: { description: string; target: number; completed: number }
   englishTask: { description: string; target: number; completed: number }
   reward: { exp: number; coins: number; diamonds: number }
+}
+
+// ===== 错题本 =====
+
+export interface ErrorBookItem {
+  id: number
+  userId: number
+  subject: Subject
+  itemKey: string
+  errorCount: number
+  lastErrorAt: string
+  mastered: boolean
 }

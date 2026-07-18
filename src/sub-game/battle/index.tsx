@@ -12,23 +12,50 @@ const SUBJECTS = [
   { key: 'english', label: '英语', color: '#7C5CFC' },
 ]
 
-const MOCK_QUESTIONS = [
-  {
-    question: '"白日依山尽"的下一句是？',
-    options: ['黄河入海流', '更上一层楼', '春风吹又生', '疑是地上霜'],
-    answer: 0,
-  },
-  {
-    question: '下列哪个不是唐代诗人？',
-    options: ['李白', '杜甫', '苏轼', '白居易'],
-    answer: 2,
-  },
-  {
-    question: '"床前明月光"的作者是？',
-    options: ['杜甫', '白居易', '王维', '李白'],
-    answer: 3,
-  },
-]
+interface BattleQuestion {
+  question: string
+  options: string[]
+  answer: number
+}
+
+const QUESTION_POOL: Record<string, BattleQuestion[]> = {
+  chinese: [
+    { question: '"白日依山尽"的下一句是？', options: ['黄河入海流', '更上一层楼', '春风吹又生', '疑是地上霜'], answer: 0 },
+    { question: '下列哪个不是唐代诗人？', options: ['李白', '杜甫', '苏轼', '白居易'], answer: 2 },
+    { question: '"床前明月光"的作者是？', options: ['杜甫', '白居易', '王维', '李白'], answer: 3 },
+    { question: '"春眠不觉晓"的下一句是？', options: ['处处闻啼鸟', '夜来风雨声', '花落知多少', '粒粒皆辛苦'], answer: 0 },
+    { question: '"锄禾日当午"的作者是？', options: ['李白', '李绅', '杜甫', '王维'], answer: 1 },
+    { question: '下列哪个是成语？', options: ['春暖花开', '鸟语花香', '花好月圆', '以上都是'], answer: 3 },
+    { question: '"举头望明月"的下一句是？', options: ['低头思故乡', '疑是地上霜', '更上一层楼', '黄河入海流'], answer: 0 },
+    { question: '《静夜思》的作者是？', options: ['杜甫', '白居易', '李白', '王维'], answer: 2 },
+  ],
+  math: [
+    { question: '25 + 37 = ?', options: ['52', '62', '72', '82'], answer: 1 },
+    { question: '8 × 7 = ?', options: ['54', '56', '58', '64'], answer: 1 },
+    { question: '100 - 46 = ?', options: ['44', '54', '64', '56'], answer: 1 },
+    { question: '72 ÷ 8 = ?', options: ['7', '8', '9', '10'], answer: 2 },
+    { question: '15 × 4 = ?', options: ['50', '55', '60', '65'], answer: 2 },
+    { question: '3/4 + 1/4 = ?', options: ['1/2', '3/4', '1', '4/4'], answer: 2 },
+    { question: '最大的两位数是多少？', options: ['90', '98', '99', '100'], answer: 2 },
+    { question: '一个正方形有4条边，3个正方形共有几条边？', options: ['8', '10', '12', '16'], answer: 2 },
+  ],
+  english: [
+    { question: '"apple" 的中文意思是？', options: ['香蕉', '苹果', '橘子', '葡萄'], answer: 1 },
+    { question: '选出正确的拼写', options: ['bannana', 'banana', 'bananna', 'bannanna'], answer: 1 },
+    { question: '"beautiful" 的意思是？', options: ['丑陋的', '美丽的', '高大的', '快速的'], answer: 1 },
+    { question: '选出不同类的单词', options: ['cat', 'dog', 'bird', 'book'], answer: 3 },
+    { question: '"I ___ a student." 空格应填？', options: ['am', 'is', 'are', 'be'], answer: 0 },
+    { question: '"Thank you" 的中文意思是？', options: ['对不起', '谢谢', '再见', '你好'], answer: 1 },
+    { question: '选出正确的翻译："早上好"', options: ['Good night', 'Good morning', 'Good afternoon', 'Good evening'], answer: 1 },
+    { question: '"elephant" 的意思是？', options: ['狮子', '老虎', '大象', '长颈鹿'], answer: 2 },
+  ],
+}
+
+function pickQuestions(subject: string, count: number): BattleQuestion[] {
+  const pool = QUESTION_POOL[subject] || QUESTION_POOL.chinese
+  const shuffled = [...pool].sort(() => Math.random() - 0.5)
+  return shuffled.slice(0, Math.min(count, shuffled.length))
+}
 
 const BattlePage: React.FC = () => {
   const { battleStatus, battleRoomId, setBattleStatus, setBattleRoomId } = useGameStore()
@@ -42,6 +69,7 @@ const BattlePage: React.FC = () => {
   const [result, setResult] = useState<{ winnerId: number; player1Score: number; player2Score: number } | null>(null)
   const [reward, setReward] = useState<{ exp: number; coins: number } | null>(null)
   const [loading, setLoading] = useState(false)
+  const [questions, setQuestions] = useState<BattleQuestion[]>([])
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -59,6 +87,7 @@ const BattlePage: React.FC = () => {
       // 模拟匹配成功
       setTimeout(() => {
         setBattleStatus('playing')
+        setQuestions(pickQuestions(subject, 5))
         setCurrentQuestion(0)
         setMyScore(0)
         setSelectedOption(null)
@@ -79,7 +108,7 @@ const BattlePage: React.FC = () => {
     if (selectedOption !== null) return
     setSelectedOption(index)
 
-    const isCorrect = index === MOCK_QUESTIONS[currentQuestion].answer
+    const isCorrect = index === questions[currentQuestion].answer
     setAnswerResult(isCorrect ? 'correct' : 'wrong')
 
     try {
@@ -102,7 +131,7 @@ const BattlePage: React.FC = () => {
     }
 
     timerRef.current = setTimeout(() => {
-      if (currentQuestion < MOCK_QUESTIONS.length - 1) {
+      if (currentQuestion < questions.length - 1) {
         setCurrentQuestion((prev) => prev + 1)
         setSelectedOption(null)
         setAnswerResult(null)
@@ -166,7 +195,7 @@ const BattlePage: React.FC = () => {
       <View className={styles.header}>
         <Text className={styles.title}>⚔️ 好友对战</Text>
         <Text className={styles.subtitle}>
-          等级 {gameProfile?.level || 1} · {battleStatus === 'idle' ? '选择学科开始对战' : battleStatus === 'matching' ? '正在匹配对手...' : battleStatus === 'playing' ? `第 ${currentQuestion + 1}/${MOCK_QUESTIONS.length} 题` : '对战结束'}
+          等级 {gameProfile?.level || 1} · {battleStatus === 'idle' ? '选择学科开始对战' : battleStatus === 'matching' ? '正在匹配对手...' : battleStatus === 'playing' ? `第 ${currentQuestion + 1}/${questions.length} 题` : '对战结束'}
         </Text>
       </View>
 
@@ -192,7 +221,7 @@ const BattlePage: React.FC = () => {
           <View className={styles.startCard}>
             <View className={styles.rulesBox}>
               <Text className={styles.rulesTitle}>📋 对战规则</Text>
-              <Text className={styles.ruleItem}>· 共 {MOCK_QUESTIONS.length} 道题目</Text>
+              <Text className={styles.ruleItem}>· 共 5 道题目</Text>
               <Text className={styles.ruleItem}>· 答对得分，答错不扣分</Text>
               <Text className={styles.ruleItem}>· 得分高者获胜</Text>
               <Text className={styles.ruleItem}>· 获胜可获得额外奖励</Text>
@@ -230,21 +259,21 @@ const BattlePage: React.FC = () => {
               <Text className={styles.questionNum}>第 {currentQuestion + 1} 题</Text>
               <Text className={styles.scoreDisplay}>得分：{myScore}</Text>
             </View>
-            <Text className={styles.questionText}>{MOCK_QUESTIONS[currentQuestion].question}</Text>
+            <Text className={styles.questionText}>{questions[currentQuestion].question}</Text>
             <View className={styles.options}>
-              {MOCK_QUESTIONS[currentQuestion].options.map((opt, idx) => {
+              {questions[currentQuestion].options.map((opt, idx) => {
                 let optClass = styles.optionItem
                 if (selectedOption === idx) {
                   if (answerResult === 'correct') {
                     optClass += ` ${styles.optionCorrect}`
                   } else if (answerResult === 'wrong') {
-                    if (idx === MOCK_QUESTIONS[currentQuestion].answer) {
+                    if (idx === questions[currentQuestion].answer) {
                       optClass += ` ${styles.optionCorrect}`
                     } else {
                       optClass += ` ${styles.optionWrong}`
                     }
                   }
-                } else if (selectedOption !== null && idx === MOCK_QUESTIONS[currentQuestion].answer) {
+                } else if (selectedOption !== null && idx === questions[currentQuestion].answer) {
                   optClass += ` ${styles.optionCorrect}`
                 }
                 return (

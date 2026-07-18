@@ -10,16 +10,16 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 // 价格配置
 const PLAN_PRICES = {
-  monthly: { amount: 2990, name: '月度VIP' },    // 29.90 元（分）
-  quarterly: { amount: 7990, name: '季度VIP' },   // 79.90 元
-  yearly: { amount: 29900, name: '年度VIP' }      // 299.00 元
+  monthly: { amount: 1990, name: '月度VIP' },    // 19.90 元（分）
+  quarterly: { amount: 4990, name: '季度VIP' },   // 49.90 元
+  yearly: { amount: 16800, name: '年度VIP' }      // 168.00 元
 }
 
 const DIAMOND_PACKAGES = {
   'diamond_60': { amount: 600, diamonds: 60, name: '60钻石' },
   'diamond_180': { amount: 1800, diamonds: 180, name: '180钻石' },
   'diamond_500': { amount: 5000, diamonds: 500, name: '500钻石' },
-  'diamond_1200': { amount: 12000, diamonds: 1200, name: '1200钻石' }
+  'diamond_1200': { amount: 9800, diamonds: 1200, name: '1200钻石' }
 }
 
 function generateOrderId() {

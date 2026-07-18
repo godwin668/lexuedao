@@ -1,19 +1,20 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { View, Text, Input, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useUserStore } from '@/store/useUserStore'
+import { createTeam, joinTeam, leaveTeam, getTeamInfo } from '@/services/api'
 import styles from './index.module.scss'
 
 interface TeamMember {
   id: number
   nickname: string
-  avatarUrl: string
-  level: number
 }
 
 interface TeamInfo {
-  id: string
+  id: number
   name: string
+  code: string
+  captainId: number
   members: TeamMember[]
   currentStage: number
   totalStages: number
@@ -21,7 +22,7 @@ interface TeamInfo {
 }
 
 const TeamPage: React.FC = () => {
-  const { user, gameProfile } = useUserStore()
+  const { user } = useUserStore()
 
   const [team, setTeam] = useState<TeamInfo | null>(null)
   const [showCreate, setShowCreate] = useState(false)
@@ -30,6 +31,19 @@ const TeamPage: React.FC = () => {
   const [teamCode, setTeamCode] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // 加载队伍信息
+  useEffect(() => {
+    const loadTeam = async () => {
+      try {
+        const res = await getTeamInfo()
+        if (res) {
+          setTeam(res as TeamInfo)
+        }
+      } catch (_) {}
+    }
+    loadTeam()
+  }, [])
+
   const handleCreateTeam = useCallback(async () => {
     if (!teamName.trim()) {
       Taro.showToast({ title: '请输入队伍名称', icon: 'none' })
@@ -37,33 +51,19 @@ const TeamPage: React.FC = () => {
     }
     setLoading(true)
     try {
-      // 模拟创建队伍
-      const mockTeam: TeamInfo = {
-        id: 'TEAM001',
-        name: teamName.trim(),
-        members: [
-          {
-            id: user?.id || 1,
-            nickname: user?.nickname || '我',
-            avatarUrl: user?.avatarUrl || '',
-            level: gameProfile?.level || 1,
-          },
-        ],
-        currentStage: 1,
-        totalStages: 10,
-        totalScore: 0,
+      const res = await createTeam(teamName.trim())
+      if (res) {
+        setTeam(res as TeamInfo)
+        setShowCreate(false)
+        setTeamName('')
+        Taro.showToast({ title: '队伍创建成功！', icon: 'success' })
       }
-      setTeam(mockTeam)
-      setShowCreate(false)
-      setTeamName('')
-      Taro.showToast({ title: '队伍创建成功！', icon: 'success' })
     } catch (err: any) {
-      console.error('创建队伍失败:', err)
-      Taro.showToast({ title: '创建失败，请重试', icon: 'none' })
+      Taro.showToast({ title: err.message || '创建失败', icon: 'none' })
     } finally {
       setLoading(false)
     }
-  }, [teamName, user, gameProfile])
+  }, [teamName])
 
   const handleJoinTeam = useCallback(async () => {
     if (!teamCode.trim()) {
@@ -72,35 +72,19 @@ const TeamPage: React.FC = () => {
     }
     setLoading(true)
     try {
-      // 模拟加入队伍
-      const mockTeam: TeamInfo = {
-        id: teamCode.trim(),
-        name: '学霸冲锋队',
-        members: [
-          { id: 101, nickname: '小明', avatarUrl: '', level: 5 },
-          { id: 102, nickname: '小红', avatarUrl: '', level: 4 },
-          {
-            id: user?.id || 1,
-            nickname: user?.nickname || '我',
-            avatarUrl: user?.avatarUrl || '',
-            level: gameProfile?.level || 1,
-          },
-        ],
-        currentStage: 3,
-        totalStages: 10,
-        totalScore: 450,
+      const res = await joinTeam(teamCode.trim())
+      if (res) {
+        setTeam(res as TeamInfo)
+        setShowJoin(false)
+        setTeamCode('')
+        Taro.showToast({ title: '加入队伍成功！', icon: 'success' })
       }
-      setTeam(mockTeam)
-      setShowJoin(false)
-      setTeamCode('')
-      Taro.showToast({ title: '加入队伍成功！', icon: 'success' })
     } catch (err: any) {
-      console.error('加入队伍失败:', err)
-      Taro.showToast({ title: '加入失败，请检查队伍码', icon: 'none' })
+      Taro.showToast({ title: err.message || '加入失败', icon: 'none' })
     } finally {
       setLoading(false)
     }
-  }, [teamCode, user, gameProfile])
+  }, [teamCode])
 
   const handleStartChallenge = useCallback(() => {
     Taro.showToast({ title: '闯关即将开始，敬请期待！', icon: 'none' })
@@ -110,10 +94,15 @@ const TeamPage: React.FC = () => {
     Taro.showModal({
       title: '提示',
       content: '确定要离开队伍吗？',
-      success: (res) => {
+      success: async (res) => {
         if (res.confirm) {
-          setTeam(null)
-          Taro.showToast({ title: '已离开队伍', icon: 'success' })
+          try {
+            await leaveTeam()
+            setTeam(null)
+            Taro.showToast({ title: '已离开队伍', icon: 'success' })
+          } catch (err: any) {
+            Taro.showToast({ title: err.message || '操作失败', icon: 'none' })
+          }
         }
       },
     })
@@ -222,7 +211,7 @@ const TeamPage: React.FC = () => {
           <View className={styles.teamCard}>
             <View className={styles.teamHeader}>
               <Text className={styles.teamName}>{team.name}</Text>
-              <Text className={styles.teamCode}>队伍码：{team.id}</Text>
+              <Text className={styles.teamCode}>队伍码：{team.code}</Text>
             </View>
 
             {/* 关卡进度 */}
@@ -255,27 +244,19 @@ const TeamPage: React.FC = () => {
               {team.members.map((member, idx) => (
                 <View key={member.id} className={styles.memberItem}>
                   <View className={styles.memberAvatar}>
-                    {member.avatarUrl ? (
-                      <View
-                        className={styles.memberAvatarImg}
-                        style={{ backgroundImage: `url(${member.avatarUrl})` }}
-                      />
-                    ) : (
-                      <View className={styles.memberAvatarPlaceholder}>
-                        <Text className={styles.memberAvatarText}>
-                          {member.nickname?.charAt(0) || '?'}
-                        </Text>
-                      </View>
-                    )}
+                    <View className={styles.memberAvatarPlaceholder}>
+                      <Text className={styles.memberAvatarText}>
+                        {member.nickname?.charAt(0) || '?'}
+                      </Text>
+                    </View>
                   </View>
                   <View className={styles.memberInfo}>
                     <Text className={styles.memberName}>
                       {member.nickname}
                       {member.id === user?.id && ' (我)'}
                     </Text>
-                    <Text className={styles.memberLevel}>Lv.{member.level}</Text>
                   </View>
-                  {idx === 0 && <Text className={styles.captainTag}>队长</Text>}
+                  {member.id === team.captainId && <Text className={styles.captainTag}>队长</Text>}
                 </View>
               ))}
             </View>

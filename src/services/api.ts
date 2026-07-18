@@ -8,6 +8,7 @@ import Taro from '@tarojs/taro'
 import type {
   User, UserGameProfile, PracticeRecord, TestRecord, StatsData,
   Achievement, UserAchievement, DailyChallenge, LeaderboardEntry,
+  ErrorBookItem,
 } from '@/types'
 
 // ============================================================
@@ -92,6 +93,17 @@ export async function savePracticeRecord(data: {
   duration: number
 }): Promise<PracticeRecord> {
   return invoke('savePracticeRecord', data)
+}
+
+export async function saveTestRecord(data: {
+  subject?: string
+  grade?: number
+  characters?: string[]
+  scores?: number[]
+  avgAccuracy?: number
+  totalTime?: number
+}): Promise<any> {
+  return invoke('saveTestRecord', data)
 }
 
 export async function getPracticeRecords(params: {
@@ -208,4 +220,44 @@ export async function createPaymentOrder(data: { type: string; plan?: string; pa
 
 export async function updateRank(data: { subject: string; score: number }): Promise<{ rank: string; seasonScore: number }> {
   return invoke('updateRank', data)
+}
+
+// ============================================================
+// 错题本
+// ============================================================
+
+export async function getErrorBook(params?: { subject?: string; page?: number; pageSize?: number }): Promise<{ items: ErrorBookItem[]; total: number }> {
+  return invoke('getErrorBook', params)
+}
+
+export async function markErrorMastered(itemId: number): Promise<void> {
+  return invoke('markErrorMastered', { itemId })
+}
+
+// ============================================================
+// 每日挑战奖励
+// ============================================================
+
+export async function claimDailyReward(): Promise<{ exp: number; coins: number }> {
+  return invoke('claimDailyReward')
+}
+
+// ============================================================
+// 组队系统
+// ============================================================
+
+export async function createTeam(name: string): Promise<any> {
+  return invoke('createTeam', { name })
+}
+
+export async function joinTeam(code: string): Promise<any> {
+  return invoke('joinTeam', { code })
+}
+
+export async function leaveTeam(): Promise<void> {
+  return invoke('leaveTeam')
+}
+
+export async function getTeamInfo(): Promise<any> {
+  return invoke('getTeamInfo')
 }

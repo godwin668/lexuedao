@@ -3,7 +3,7 @@ import { useDidShow, useDidHide } from '@tarojs/taro'
 import Taro from '@tarojs/taro'
 import { useUserStore } from '@/store/useUserStore'
 import { useGameStore } from '@/store/useGameStore'
-import { login, getUserProfile, getGameProfile, getDailyChallenge, getAchievements, getUserAchievements } from '@/services/api'
+import { login, getUserProfile, getGameProfile, getDailyChallenge, getAchievements, getUserAchievements, getChildList } from '@/services/api'
 import './app.scss'
 
 function App(props) {
@@ -44,6 +44,17 @@ function App(props) {
         if (user) {
           useUserStore.getState().setUser(user)
           useUserStore.getState().setCurrentGrade(user.grade)
+          // 初始化 VIP 状态
+          useUserStore.getState().setVipStatus(user.isVip || false, user.vipExpireDate || null)
+          // 家长模式：加载绑定孩子列表
+          if (user.role === 'parent') {
+            try {
+              const children = await getChildList() as any
+              if (children) {
+                useUserStore.getState().setChildren(children)
+              }
+            } catch (_) {}
+          }
         }
       } catch (_) {}
 

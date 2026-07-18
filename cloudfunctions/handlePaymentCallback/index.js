@@ -61,8 +61,14 @@ exports.main = async (event, context) => {
         [days, order.id]
       )
 
-      // TODO: 更新用户 VIP 状态（如需要 VIP 标识字段可扩展 users 表）
-      // 当前版本记录日志即可
+      // 更新用户 VIP 状态
+      await client.query(
+        `UPDATE users
+         SET is_vip = true,
+             vip_expire_date = CURRENT_DATE + INTERVAL '1 day' * $1
+         WHERE id = $2`,
+        [days, order.user_id]
+      )
 
       // 记录货币流水（可选，记录订阅消费）
       await client.query(

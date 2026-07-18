@@ -1,0 +1,10 @@
+{
+  "name": "joinTeam",
+  "version": "1.0.0",
+  "description": "加入队伍",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest",
+    "pg": "^8.11.0"
+  }
+}

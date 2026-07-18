@@ -34,6 +34,11 @@ const SYSTEM_PROMPT = `你是"乐学岛"的 AI 学习助手，专门为小学生
 
 const FALLBACK_REPLY = '抱歉，AI 服务暂时不可用，请稍后再试～你也可以直接去练习模块开始学习哦！'
 
+async function getUserId(client, openid) {
+  const result = await client.query('SELECT id FROM users WHERE openid = $1', [openid])
+  return result.rows.length > 0 ? result.rows[0].id : null
+}
+
 function callDeepSeek(messages, gradeInfo) {
   const systemContent = SYSTEM_PROMPT + gradeInfo
 
@@ -123,6 +128,24 @@ exports.main = async (event, context) => {
 
     // 调用 DeepSeek
     const reply = await callDeepSeek(messages, gradeInfo)
+
+    // 保存对话记录
+    try {
+      const lastUserMsg = userMessages[userMessages.length - 1]
+      const userId = await getUserId(client, openid)
+      if (userId) {
+        await client.query(
+          `INSERT INTO ai_conversations (user_id, subject, role, content) VALUES ($1, $2, $3, $4)`,
+          [userId, event.subject || 'general', 'user', lastUserMsg.content]
+        )
+        await client.query(
+          `INSERT INTO ai_conversations (user_id, subject, role, content) VALUES ($1, $2, $3, $4)`,
+          [userId, event.subject || 'general', 'assistant', reply]
+        )
+      }
+    } catch (saveErr) {
+      console.warn('[aiChat] 保存对话记录失败:', saveErr.message)
+    }
 
     return { code: 0, message: 'ok', data: { reply } }
   } catch (err) {

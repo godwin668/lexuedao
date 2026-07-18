@@ -4,6 +4,7 @@ import Taro from '@tarojs/taro'
 import { useUserStore } from '@/store/useUserStore'
 import { useGameStore } from '@/store/useGameStore'
 import { useSafeArea } from '@/hooks/useSafeArea'
+import { analyzeWeakPoints, getRecommendations } from '@/services/api'
 import { Subject, GradeLevel } from '@/types'
 import styles from './index.module.scss'
 
@@ -18,6 +19,7 @@ const HomePage: React.FC = () => {
   const { dailyChallenge } = useGameStore()
   const { top: safeTop } = useSafeArea()
   const [greeting, setGreeting] = useState('')
+  const [aiTips, setAiTips] = useState<string[]>([])
 
   useEffect(() => {
     const hour = new Date().getHours()
@@ -27,6 +29,19 @@ const HomePage: React.FC = () => {
     else if (hour < 14) setGreeting('中午好')
     else if (hour < 18) setGreeting('下午好')
     else setGreeting('晚上好')
+  }, [])
+
+  // 加载 AI 学习建议
+  useEffect(() => {
+    const loadAiTips = async () => {
+      try {
+        const res = await analyzeWeakPoints()
+        if (res && (res as any).recommendations) {
+          setAiTips((res as any).recommendations.slice(0, 3))
+        }
+      } catch (_) {}
+    }
+    loadAiTips()
   }, [])
 
   const handleSubjectClick = (subject: Subject) => {
@@ -122,6 +137,21 @@ const HomePage: React.FC = () => {
                 {dailyChallenge.englishTask.completed}/{dailyChallenge.englishTask.target}
               </Text>
             </View>
+          </View>
+        </View>
+      )}
+
+      {/* AI 学习建议 */}
+      {aiTips.length > 0 && (
+        <View className={styles.section}>
+          <Text className={styles.sectionTitle}>💡 AI 学习建议</Text>
+          <View className={styles.tipsList}>
+            {aiTips.map((tip, idx) => (
+              <View key={idx} className={styles.tipItem}>
+                <Text className={styles.tipDot}>•</Text>
+                <Text className={styles.tipText}>{tip}</Text>
+              </View>
+            ))}
           </View>
         </View>
       )}

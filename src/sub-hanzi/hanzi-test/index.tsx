@@ -3,7 +3,7 @@ import { View, Text, Canvas } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import { useHanziStore } from '@/store/useHanziStore';
-import { savePracticeRecord } from '@/services/api';
+import { savePracticeRecord, updateRank } from '@/services/api';
 import { getStrokeData } from '@/data/strokeData';
 import { drawGrid } from '@/utils/canvasStrokeRenderer';
 import { evaluateCharacterScore } from '@/utils/strokeScoring';
@@ -104,6 +104,8 @@ const TestPage: React.FC = () => {
         accuracy: Math.round(avgAccuracy),
         duration: timer,
       });
+      // 更新段位分
+      updateRank({ subject: 'hanzi', score: Math.round(avgAccuracy) }).catch(() => {})
     } catch (err) {
       console.error('[TestPage] submit error:', err);
     }

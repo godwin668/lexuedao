@@ -48,6 +48,8 @@ export default defineAppConfig({
         'report/index',
         'vip/index',
         'diamond/index',
+        'error-book/index',
+        'bind-child/index',
       ],
     },
   ],

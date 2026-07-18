@@ -1,0 +1,10 @@
+{
+  "name": "leaveTeam",
+  "version": "1.0.0",
+  "description": "离开队伍",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest",
+    "pg": "^8.11.0"
+  }
+}

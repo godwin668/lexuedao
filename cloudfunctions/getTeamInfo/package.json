@@ -1,0 +1,10 @@
+{
+  "name": "getTeamInfo",
+  "version": "1.0.0",
+  "description": "获取队伍信息",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest",
+    "pg": "^8.11.0"
+  }
+}
