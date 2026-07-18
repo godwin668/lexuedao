@@ -67,6 +67,40 @@ export function drawGrid(
 }
 
 /**
+ * 计算 SVG path 数组的包围盒
+ */
+function calcStrokesBounds(strokes: string[]): { minX: number; minY: number; maxX: number; maxY: number } {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+  for (const pathStr of strokes) {
+    const nums = pathStr.match(/-?\d+(\.\d+)?/g)?.map(Number) || []
+    for (let i = 0; i < nums.length; i += 2) {
+      const x = nums[i], y = nums[i + 1]
+      if (x < minX) minX = x
+      if (y < minY) minY = y
+      if (x > maxX) maxX = x
+      if (y > maxY) maxY = y
+    }
+  }
+  return { minX, minY, maxX, maxY }
+}
+
+/**
+ * 计算 medians 的包围盒
+ */
+function calcMediansBounds(medians: number[][][]): { minX: number; minY: number; maxX: number; maxY: number } {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+  for (const stroke of medians) {
+    for (const [x, y] of stroke) {
+      if (x < minX) minX = x
+      if (y < minY) minY = y
+      if (x > maxX) maxX = x
+      if (y > maxY) maxY = y
+    }
+  }
+  return { minX, minY, maxX, maxY }
+}
+
+/**
  * 解析单条 SVG path 并绘制到 canvas
  */
 function drawSvgPath(ctx: any, pathStr: string) {
@@ -118,17 +152,23 @@ export function drawAllStrokeOutlines(
   const lineJoin = opts.lineJoin || 'round'
   const drawW = w - m * 2
   const drawH = h - m * 2
-  const scale = Math.min(drawW / gridSize, drawH / gridSize)
-  const offsetX = m + (drawW - gridSize * scale) / 2
-  const offsetY = m + (drawH - gridSize * scale) / 2
+
+  // 计算字的实际包围盒，用于居中
+  const bounds = calcStrokesBounds(strokes)
+  const charW = bounds.maxX - bounds.minX || 1
+  const charH = bounds.maxY - bounds.minY || 1
+  const charScale = Math.min(drawW / charW, drawH / charH)
+  const charOffsetX = (drawW - charW * charScale) / 2
+  const charOffsetY = (drawH - charH * charScale) / 2
 
   ctx.save()
   // 数据坐标系 Y 轴向上，Canvas Y 轴向下，需要翻转
-  ctx.translate(offsetX, offsetY + gridSize * scale)
-  ctx.scale(scale, -scale)
+  ctx.translate(m + charOffsetX, m + charOffsetY + charH * charScale)
+  ctx.scale(charScale, -charScale)
+  ctx.translate(-bounds.minX, -bounds.minY)
   ctx.strokeStyle = color
   ctx.fillStyle = color
-  ctx.lineWidth = lineWidth / scale
+  ctx.lineWidth = lineWidth / charScale
   ctx.lineCap = lineCap
   ctx.lineJoin = lineJoin
 
@@ -196,12 +236,16 @@ export class StrokeAnimationRenderer {
     const w = this.opts.canvasWidth
     const h = this.opts.canvasHeight
     const m = this.opts.margin
-    const gridSize = this.opts.gridSize
     const drawW = w - m * 2
     const drawH = h - m * 2
-    const scale = Math.min(drawW / gridSize, drawH / gridSize)
-    const offsetX = m + (drawW - gridSize * scale) / 2
-    const offsetY = m + (drawH - gridSize * scale) / 2
+
+    // 计算 medians 的实际包围盒，用于居中
+    const bounds = calcMediansBounds(this.medians)
+    const charW = bounds.maxX - bounds.minX || 1
+    const charH = bounds.maxY - bounds.minY || 1
+    const charScale = Math.min(drawW / charW, drawH / charH)
+    const charOffsetX = (drawW - charW * charScale) / 2
+    const charOffsetY = (drawH - charH * charScale) / 2
 
     this.timerId = setInterval(() => {
       if (this.currentStrokeIndex >= this.medians.length) {
@@ -221,8 +265,9 @@ export class StrokeAnimationRenderer {
       const ctx = this.ctx
       ctx.save()
       // 数据坐标系 Y 轴向上，Canvas Y 轴向下，需要翻转
-      ctx.translate(offsetX, offsetY + gridSize * scale)
-      ctx.scale(scale, -scale)
+      ctx.translate(m + charOffsetX, m + charOffsetY + charH * charScale)
+      ctx.scale(charScale, -charScale)
+      ctx.translate(-bounds.minX, -bounds.minY)
 
       // 已完成的笔画（浅色填充）
       ctx.strokeStyle = this.fillColor

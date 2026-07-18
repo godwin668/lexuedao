@@ -124,11 +124,11 @@ export function evaluateCharacterScore(
   const rangeY = maxY - minY || 1
   const scale = 1024 / Math.max(rangeX, rangeY)
 
-  // 归一化用户笔画到 1024x1024 坐标系（居中）
+  // 归一化用户笔画到 1024x1024 坐标系（居中，Y 轴翻转以匹配数据坐标系）
   const normalizedUser: number[][][] = userPoints.map((stroke) =>
     stroke.map(([x, y]) => [
       (x - minX) * scale + (1024 - rangeX * scale) / 2,
-      (y - minY) * scale + (1024 - rangeY * scale) / 2,
+      1024 - ((y - minY) * scale + (1024 - rangeY * scale) / 2),
     ])
   )
 
