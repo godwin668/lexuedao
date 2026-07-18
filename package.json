@@ -11,7 +11,7 @@
   },
   "scripts": {
     "build:weapp": "taro build --type weapp && node scripts/postbuild.js",
-    "dev:weapp": "concurrently \"taro build --type weapp --watch\" \"node scripts/postbuild.js --watch\""
+    "dev:weapp": "taro build --type weapp --watch"
   },
   "browserslist": [
     "last 3 versions",

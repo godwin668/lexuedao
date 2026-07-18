@@ -10,7 +10,7 @@
 .header {
   background: linear-gradient(135deg, $color-primary, $color-primary-light);
   padding: $spacing-lg;
-  padding-top: calc($spacing-xl + env(safe-area-inset-top, 0));
+  padding-top: calc(88rpx + env(safe-area-inset-top, 0));
   color: #fff;
 }
 
