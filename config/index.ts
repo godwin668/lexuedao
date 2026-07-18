@@ -35,8 +35,8 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
     },
     mini: {
       output: {
-        filename: '[name].[hash:8].js',
-        chunkFilename: '[name].[chunkhash:8].js',
+        filename: '[name].js',
+        chunkFilename: '[name].js',
       },
       postcss: {
         pxtransform: {
