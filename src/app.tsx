@@ -6,7 +6,7 @@ import './app.scss'
 function App(props) {
   useEffect(() => {
     if (process.env.TARO_ENV === 'weapp') {
-      Taro.cloud.init({ env: 'cloudbase-d5ghb70tq088d5100', traceUser: true })
+      Taro.cloud.init({ env: 'lexuedao-d9gnk5dru823f8b98', traceUser: true })
     }
   }, [])
 

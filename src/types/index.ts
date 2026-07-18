@@ -66,7 +66,8 @@ export interface UserAchievement {
 
 // ===== 学习记录 =====
 
-export interface PracticeRecord {
+// PG 行类型（内部，云函数使用）
+export interface PracticeRecordRow {
   id: number
   userId: number
   subject: Subject
@@ -78,6 +79,29 @@ export interface PracticeRecord {
   duration: number
   expGained: number
   coinsGained: number
+  createdAt: string
+}
+
+// 前端展示用的练习记录（从 PG content_json 展开）
+export interface PracticeRecord {
+  id: number
+  character: string
+  mode: string
+  strokes: string[][]
+  score: number
+  accuracy: number
+  aesthetics: number
+  duration: number
+  createdAt: string
+}
+
+// 前端展示用的测试记录
+export interface TestRecord {
+  id: number
+  characters: string[]
+  scores: number[]
+  avgAccuracy: number
+  totalTime: number
   createdAt: string
 }
 
@@ -136,7 +160,7 @@ export interface CurrencyLog {
 export interface StatsData {
   totalPractices: number
   totalTests: number
-  totalBattles: number
+  totalCharacters: number
   avgScore: number
   correctRate: number
   weeklyData: { date: string; count: number; score: number }[]

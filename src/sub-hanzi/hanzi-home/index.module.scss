@@ -1,4 +1,5 @@
-@import '@/styles/variables.scss';
+@use 'sass:color';
+@use '@/styles/variables.scss' as *;
 
 .page {
   min-height: 100vh;
@@ -8,7 +9,7 @@
 
 // ===== 头部 =====
 .header {
-  background: linear-gradient(135deg, $color-hanzi, lighten($color-hanzi, 10%));
+  background: linear-gradient(135deg, $color-hanzi, color.adjust($color-hanzi, $lightness: 10%));
   padding: $spacing-lg;
   padding-top: calc($spacing-xl + env(safe-area-inset-top, 0));
   color: #fff;

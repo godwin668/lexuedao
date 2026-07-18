@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '@/styles/variables.scss' as *;
 
 .grid {
@@ -22,7 +23,7 @@
   transition: all $transition-base;
 
   &.selected {
-    background: linear-gradient(135deg, $color-hanzi, lighten($color-hanzi, 10%));
+    background: linear-gradient(135deg, $color-hanzi, color.adjust($color-hanzi, $lightness: 10%));
     color: $color-text-white;
     border-color: $color-hanzi;
     box-shadow: 0 4rpx 12rpx rgba($color-hanzi, 0.3);

@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '@/styles/variables.scss' as *;
 
 $page-padding: $spacing-lg;
@@ -10,7 +11,7 @@ $font-weight-bold: 700;
 $transition-base: 0.25s ease;
 $shadow-float: $shadow-card;
 $color-accent: $color-warning;
-$color-accent-light: lighten($color-warning, 10%);
+$color-accent-light: color.adjust($color-warning, $lightness: 10%);
 $color-error: $color-danger;
 
 .page {
@@ -40,7 +41,7 @@ $color-error: $color-danger;
   }
 
   &.good {
-    background: linear-gradient(135deg, $color-hanzi, lighten($color-hanzi, 10%));
+    background: linear-gradient(135deg, $color-hanzi, color.adjust($color-hanzi, $lightness: 10%));
     box-shadow: 0 8rpx 24rpx rgba($color-hanzi, 0.35);
   }
 
@@ -176,7 +177,7 @@ $color-error: $color-danger;
 }
 
 .standardChar {
-  background: linear-gradient(135deg, rgba($color-hanzi, 0.08), rgba(lighten($color-hanzi, 10%), 0.08));
+  background: linear-gradient(135deg, rgba($color-hanzi, 0.08), rgba(color.adjust($color-hanzi, $lightness: 10%), 0.08));
   border: 2rpx solid rgba($color-hanzi, 0.3);
 }
 
@@ -290,7 +291,7 @@ $color-error: $color-danger;
 }
 
 .shareBtn {
-  background: linear-gradient(135deg, $color-hanzi, lighten($color-hanzi, 10%));
+  background: linear-gradient(135deg, $color-hanzi, color.adjust($color-hanzi, $lightness: 10%));
   color: $color-text-white;
 }
 

@@ -1,4 +1,4 @@
-@import './styles/variables.scss';
+@use './styles/variables.scss' as *;
 
 page {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;

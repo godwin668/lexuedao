@@ -3,8 +3,7 @@ import { View, Text, Canvas } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import { useHanziStore } from '@/store/useHanziStore';
-import { callFunction } from '@/services/cloud';
-import { TestRecord } from '@/types';
+import { savePracticeRecord } from '@/services/api';
 import { getStrokeData } from '@/data/strokeData';
 import { drawGrid } from '@/utils/canvasStrokeRenderer';
 import { evaluateCharacterScore } from '@/utils/strokeScoring';
@@ -91,11 +90,19 @@ const TestPage: React.FC = () => {
     });
 
     try {
-      await callFunction<TestRecord>('saveTestRecord', {
-        characters: selectedCharacters.map((c) => c.char),
-        scores: finalScores,
-        avgAccuracy: Math.round(avgAccuracy),
-        totalTime: timer,
+      await savePracticeRecord({
+        subject: 'hanzi',
+        type: 'test',
+        grade: useHanziStore.getState().currentGrade,
+        contentJson: {
+          characters: selectedCharacters.map((c) => c.char),
+          scores: finalScores,
+          avgAccuracy: Math.round(avgAccuracy),
+          totalTime: timer,
+        },
+        score: Math.round(avgAccuracy),
+        accuracy: Math.round(avgAccuracy),
+        duration: timer,
       });
     } catch (err) {
       console.error('[TestPage] submit error:', err);

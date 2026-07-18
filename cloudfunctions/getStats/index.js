@@ -1,107 +1,133 @@
-const cloud = require('wx-server-sdk');
-cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
-const db = cloud.database();
+/**
+ * getStats - 获取学习统计数据
+ * 利用 PG 窗口函数和聚合查询
+ */
+const cloud = require('wx-server-sdk')
+const { Client } = require('pg')
 
-function getLastNDays(n) {
-  const days = [];
-  const now = new Date();
-  for (let i = n - 1; i >= 0; i--) {
-    const d = new Date(now);
-    d.setDate(d.getDate() - i);
-    d.setHours(0, 0, 0, 0);
-    days.push(d);
-  }
-  return days;
-}
-
-function getLastNMonths(n) {
-  const months = [];
-  const now = new Date();
-  for (let i = n - 1; i >= 0; i--) {
-    const m = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    months.push(m);
-  }
-  return months;
-}
-
-function formatDate(d) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
-
-function formatMonth(d) {
-  return `${d.getMonth() + 1}月`;
-}
+cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 exports.main = async (event, context) => {
+  const client = new Client({
+    connectionString: process.env.PG_CONNECTION_STRING,
+  })
+
   try {
-    const wxContext = cloud.getWXContext();
-    const openid = wxContext.OPENID;
+    const wxContext = cloud.getWXContext()
+    const openid = wxContext.OPENID
 
-    const practiceCount = await db.collection('practice_records').where({ _openid: openid }).count();
-    const testCount = await db.collection('test_records').where({ _openid: openid }).count();
-    const practiceRecords = await db.collection('practice_records').where({ _openid: openid }).get();
+    await client.connect()
 
-    let totalScore = 0;
-    let totalAccuracy = 0;
-    const uniqueChars = new Set();
-    practiceRecords.data.forEach((r) => {
-      totalScore += r.score || 0;
-      totalAccuracy += r.accuracy || 0;
-      uniqueChars.add(r.character);
-    });
+    const userResult = await client.query(
+      'SELECT id FROM users WHERE openid = $1',
+      [openid]
+    )
+    if (userResult.rows.length === 0) {
+      return { code: 0, message: 'success', data: null }
+    }
+    const userId = userResult.rows[0].id
+    const subject = event.subject || null
 
-    const avgScore = practiceRecords.data.length > 0 ? Math.round(totalScore / practiceRecords.data.length) : 0;
-    const correctRate = practiceRecords.data.length > 0 ? Math.round(totalAccuracy / practiceRecords.data.length) : 0;
+    let subjectFilter = ''
+    const params = [userId]
+    let paramIdx = 2
+    if (subject) {
+      subjectFilter = ` AND subject = $${paramIdx++}`
+      params.push(subject)
+    }
 
-    const last7Days = getLastNDays(7);
-    const weeklyData = last7Days.map((day) => {
-      const dayStr = formatDate(day);
-      const dayRecords = practiceRecords.data.filter((r) => {
-        if (!r.createTime) return false;
-        const recordDate = new Date(r.createTime);
-        return formatDate(recordDate) === dayStr;
-      });
-      const totalScore = dayRecords.reduce((sum, r) => sum + (r.score || 0), 0);
-      return {
-        date: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][day.getDay()],
-        count: dayRecords.length,
-        score: dayRecords.length > 0 ? Math.round(totalScore / dayRecords.length) : 0,
-      };
-    });
+    // 总练习数
+    const practiceCount = await client.query(
+      `SELECT COUNT(*) as total FROM practice_records WHERE user_id = $1 AND type = 'practice' ${subjectFilter}`,
+      params
+    )
 
-    const last6Months = getLastNMonths(6);
-    const monthlyData = last6Months.map((month) => {
-      const monthRecords = practiceRecords.data.filter((r) => {
-        if (!r.createTime) return false;
-        const recordDate = new Date(r.createTime);
-        return recordDate.getFullYear() === month.getFullYear() && recordDate.getMonth() === month.getMonth();
-      });
-      const totalScore = monthRecords.reduce((sum, r) => sum + (r.score || 0), 0);
-      return {
-        month: formatMonth(month),
-        count: monthRecords.length,
-        score: monthRecords.length > 0 ? Math.round(totalScore / monthRecords.length) : 0,
-      };
-    });
+    // 总测试数
+    const testCount = await client.query(
+      `SELECT COUNT(*) as total FROM practice_records WHERE user_id = $1 AND type = 'test' ${subjectFilter}`,
+      params
+    )
+
+    // 平均分
+    const avgResult = await client.query(
+      `SELECT COALESCE(AVG(score), 0) as avg_score, COALESCE(AVG(accuracy), 0) as avg_accuracy
+       FROM practice_records WHERE user_id = $1 ${subjectFilter}`,
+      params
+    )
+
+    // 练字数（从 content_json 中提取去重汉字）
+    const charResult = await client.query(
+      `SELECT COUNT(DISTINCT content_json->>'character') as total
+       FROM practice_records
+       WHERE user_id = $1 AND type = 'practice' AND content_json->>'character' IS NOT NULL ${subjectFilter}`,
+      params
+    )
+
+    // 本周趋势（7天）
+    const weeklyResult = await client.query(
+      `SELECT
+         to_char(d.date, 'Day') as day_name,
+         COALESCE(COUNT(pr.id), 0) as count,
+         COALESCE(ROUND(AVG(pr.score)), 0) as score
+       FROM generate_series(
+         date_trunc('day', NOW()) - INTERVAL '6 days',
+         date_trunc('day', NOW()),
+         '1 day'
+       ) d(date)
+       LEFT JOIN practice_records pr
+         ON pr.user_id = $1
+         AND date_trunc('day', pr.created_at) = d.date
+         ${subject ? `AND pr.subject = $${paramIdx}` : ''}
+       GROUP BY d.date
+       ORDER BY d.date`,
+      subject ? [userId, subject] : [userId]
+    )
+
+    // 月度趋势（6个月）
+    const monthlyResult = await client.query(
+      `SELECT
+         to_char(d.month, 'FMMM月') as month_name,
+         COALESCE(COUNT(pr.id), 0) as count,
+         COALESCE(ROUND(AVG(pr.score)), 0) as score
+       FROM generate_series(
+         date_trunc('month', NOW()) - INTERVAL '5 months',
+         date_trunc('month', NOW()),
+         '1 month'
+       ) d(month)
+       LEFT JOIN practice_records pr
+         ON pr.user_id = $1
+         AND date_trunc('month', pr.created_at) = d.month
+         ${subject ? `AND pr.subject = $${paramIdx}` : ''}
+       GROUP BY d.month
+       ORDER BY d.month`,
+      subject ? [userId, subject] : [userId]
+    )
 
     return {
       code: 0,
       message: 'success',
       data: {
-        totalPractices: practiceCount.total,
-        totalTests: testCount.total,
-        totalCharacters: uniqueChars.size,
-        avgScore,
-        correctRate,
-        weeklyData,
-        monthlyData,
+        totalPractices: parseInt(practiceCount.rows[0].total),
+        totalTests: parseInt(testCount.rows[0].total),
+        totalCharacters: parseInt(charResult.rows[0].total),
+        avgScore: Math.round(parseFloat(avgResult.rows[0].avg_score)),
+        correctRate: Math.round(parseFloat(avgResult.rows[0].avg_accuracy)),
+        weeklyData: weeklyResult.rows.map(r => ({
+          date: r.day_name.trim(),
+          count: parseInt(r.count),
+          score: parseInt(r.score),
+        })),
+        monthlyData: monthlyResult.rows.map(r => ({
+          month: r.month_name,
+          count: parseInt(r.count),
+          score: parseInt(r.score),
+        })),
       },
-    };
+    }
   } catch (err) {
-    console.error('[getStats] error:', err);
-    return { code: -1, message: err.message || '服务异常', data: null };
+    console.error('[getStats] error:', err)
+    return { code: -1, message: err.message || '服务异常', data: null }
+  } finally {
+    await client.end()
   }
-};
+}

@@ -3,8 +3,8 @@ import { View, Text } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import { useHanziStore } from '@/store/useHanziStore';
-import { callFunction } from '@/services/cloud';
-import { PracticeRecord, TestRecord, StatsData } from '@/types';
+import { getStats, getPracticeRecords, getTestRecords } from '@/services/api';
+import type { PracticeRecord, TestRecord, StatsData } from '@/types';
 import styles from './index.module.scss';
 
 const HistoryPage: React.FC = () => {
@@ -21,8 +21,8 @@ const HistoryPage: React.FC = () => {
 
   const loadStats = async () => {
     try {
-      const data = await callFunction<StatsData>('getStats');
-      setStats(data);
+      const data = await getStats('hanzi');
+      if (data) setStats(data);
     } catch (err) {
       console.error('[HistoryPage] loadStats error:', err);
     }
@@ -30,7 +30,7 @@ const HistoryPage: React.FC = () => {
 
   const loadPracticeRecords = async () => {
     try {
-      const { records } = await callFunction<{ records: PracticeRecord[]; total: number }>('getPracticeRecords', { page: 1, pageSize: 20 });
+      const { records } = await getPracticeRecords({ subject: 'hanzi', page: 1, pageSize: 20 });
       setPracticeRecords(records);
     } catch (err) {
       console.error('[HistoryPage] loadPracticeRecords error:', err);
@@ -39,15 +39,15 @@ const HistoryPage: React.FC = () => {
 
   const loadTestRecords = async () => {
     try {
-      const { records } = await callFunction<{ records: TestRecord[]; total: number }>('getTestRecords', { page: 1, pageSize: 20 });
+      const { records } = await getTestRecords({ subject: 'hanzi', page: 1, pageSize: 20 });
       setTestRecords(records);
     } catch (err) {
       console.error('[HistoryPage] loadTestRecords error:', err);
     }
   };
 
-  const formatDate = (timestamp: number) => {
-    const d = new Date(timestamp);
+  const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr);
     return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
   };
 
@@ -154,7 +154,7 @@ const HistoryPage: React.FC = () => {
             </View>
           ) : (
             practiceRecords.map((r) => (
-              <View key={r._id} className={styles.recordCard} onClick={() => handlePracticeRecordClick(r)}>
+              <View key={r.id} className={styles.recordCard} onClick={() => handlePracticeRecordClick(r)}>
                 <View className={styles.recordLeft}>
                   <View className={styles.recordChar}>
                     <Text>{r.character}</Text>
@@ -166,7 +166,7 @@ const HistoryPage: React.FC = () => {
                 </View>
                 <View className={styles.recordRight}>
                   <Text className={styles.recordScore}>{r.score}分</Text>
-                  <Text className={styles.recordTime}>{formatDate(r.createTime)}</Text>
+                  <Text className={styles.recordTime}>{formatDate(r.createdAt)}</Text>
                 </View>
               </View>
             ))
@@ -181,7 +181,7 @@ const HistoryPage: React.FC = () => {
             </View>
           ) : (
             testRecords.map((r) => (
-              <View key={r._id} className={styles.recordCard} onClick={() => handleTestRecordClick(r)}>
+              <View key={r.id} className={styles.recordCard} onClick={() => handleTestRecordClick(r)}>
                 <View className={styles.recordLeft}>
                   <View className={styles.recordChar}>
                     <Text>{r.characters[0]}</Text>
@@ -193,7 +193,7 @@ const HistoryPage: React.FC = () => {
                 </View>
                 <View className={styles.recordRight}>
                   <Text className={styles.recordScore}>{r.avgAccuracy}%</Text>
-                  <Text className={styles.recordTime}>{formatDate(r.createTime)}</Text>
+                  <Text className={styles.recordTime}>{formatDate(r.createdAt)}</Text>
                 </View>
               </View>
             ))

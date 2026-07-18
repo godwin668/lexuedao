@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '@/styles/variables.scss' as *;
 
 $page-padding: $spacing-lg;
@@ -10,7 +11,7 @@ $font-weight-bold: 700;
 $transition-base: 0.25s ease;
 $shadow-float: $shadow-card;
 $color-accent: $color-warning;
-$color-accent-light: lighten($color-warning, 10%);
+$color-accent-light: color.adjust($color-warning, $lightness: 10%);
 $color-error: $color-danger;
 
 .page {
@@ -44,7 +45,7 @@ $color-error: $color-danger;
   transition: all $transition-base;
 
   &.active {
-    background: linear-gradient(135deg, $color-hanzi, lighten($color-hanzi, 10%));
+    background: linear-gradient(135deg, $color-hanzi, color.adjust($color-hanzi, $lightness: 10%));
     color: $color-text-white;
     font-weight: $font-weight-semibold;
   }
@@ -147,7 +148,7 @@ $color-error: $color-danger;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, $color-hanzi, lighten($color-hanzi, 10%));
+  background: linear-gradient(135deg, $color-hanzi, color.adjust($color-hanzi, $lightness: 10%));
   border-radius: $radius-button;
   color: $color-text-white;
   font-size: $font-lg;

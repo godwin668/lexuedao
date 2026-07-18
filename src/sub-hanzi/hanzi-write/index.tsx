@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, Canvas } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useHanziStore } from '@/store/useHanziStore';
-import { callFunction } from '@/services/cloud';
-import { PracticeRecord } from '@/types';
+import { savePracticeRecord } from '@/services/api';
 import { getStrokeData } from '@/data/strokeData';
 import { StrokeAnimationRenderer, drawGrid, drawAllStrokeOutlines } from '@/utils/canvasStrokeRenderer';
 import { evaluateCharacterScore } from '@/utils/strokeScoring';
@@ -192,11 +191,17 @@ const WritePage: React.FC = () => {
     });
 
     try {
-      await callFunction<PracticeRecord>('savePracticeRecord', {
-        character: currentChar?.char || '',
-        mode: 'free',
-        strokes: userStrokes,
-        score, accuracy, aesthetics,
+      await savePracticeRecord({
+        subject: 'hanzi',
+        type: 'free',
+        grade: useHanziStore.getState().currentGrade,
+        contentJson: {
+          character: currentChar?.char || '',
+          strokes: userStrokes,
+          aesthetics,
+        },
+        score,
+        accuracy,
         duration: 30,
       });
     } catch (err) {

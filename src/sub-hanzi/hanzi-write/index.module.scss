@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '@/styles/variables.scss' as *;
 
 $page-padding: $spacing-lg;
@@ -10,7 +11,7 @@ $font-weight-bold: 700;
 $transition-base: 0.25s ease;
 $shadow-float: $shadow-card;
 $color-accent: $color-warning;
-$color-accent-light: lighten($color-warning, 10%);
+$color-accent-light: color.adjust($color-warning, $lightness: 10%);
 $color-error: $color-danger;
 
 .page {
@@ -48,7 +49,7 @@ $color-error: $color-danger;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, $color-hanzi, lighten($color-hanzi, 10%));
+  background: linear-gradient(135deg, $color-hanzi, color.adjust($color-hanzi, $lightness: 10%));
   border-radius: $radius-md;
   font-size: 40rpx;
   font-weight: $font-weight-bold;
@@ -190,7 +191,7 @@ $color-error: $color-danger;
 }
 
 .submitBtn {
-  background: linear-gradient(135deg, $color-hanzi, lighten($color-hanzi, 10%));
+  background: linear-gradient(135deg, $color-hanzi, color.adjust($color-hanzi, $lightness: 10%));
   color: $color-text-white;
 }
 
@@ -213,7 +214,7 @@ $color-error: $color-danger;
 
   &:active {
     opacity: 0.7;
-    background: darken($color-bg-hover, 5%);
+    background: color.adjust($color-bg-hover, $lightness: -5%);
   }
 }
 
