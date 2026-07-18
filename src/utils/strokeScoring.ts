@@ -110,25 +110,48 @@ export function evaluateCharacterScore(
   )
 
   // 计算用户笔画的包围盒
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+  let userMinX = Infinity, userMinY = Infinity, userMaxX = -Infinity, userMaxY = -Infinity
   for (const stroke of userPoints) {
     for (const [x, y] of stroke) {
-      if (x < minX) minX = x
-      if (y < minY) minY = y
-      if (x > maxX) maxX = x
-      if (y > maxY) maxY = y
+      if (x < userMinX) userMinX = x
+      if (y < userMinY) userMinY = y
+      if (x > userMaxX) userMaxX = x
+      if (y > userMaxY) userMaxY = y
     }
   }
 
-  const rangeX = maxX - minX || 1
-  const rangeY = maxY - minY || 1
-  const scale = 1024 / Math.max(rangeX, rangeY)
+  // 计算标准 medians 的包围盒
+  let stdMinX = Infinity, stdMinY = Infinity, stdMaxX = -Infinity, stdMaxY = -Infinity
+  for (const stroke of medians) {
+    for (const [x, y] of stroke) {
+      if (x < stdMinX) stdMinX = x
+      if (y < stdMinY) stdMinY = y
+      if (x > stdMaxX) stdMaxX = x
+      if (y > stdMaxY) stdMaxY = y
+    }
+  }
 
-  // 归一化用户笔画到 1024x1024 坐标系（居中，Y 轴翻转以匹配数据坐标系）
+  const userRangeX = userMaxX - userMinX || 1
+  const userRangeY = userMaxY - userMinY || 1
+  const stdRangeX = stdMaxX - stdMinX || 1
+  const stdRangeY = stdMaxY - stdMinY || 1
+
+  // 统一缩放到 1024 空间（取两者中较大的缩放比，保持比例一致）
+  const scale = 1024 / Math.max(userRangeX, userRangeY, stdRangeX, stdRangeY)
+
+  // 归一化用户笔画：居中到 1024 空间，Y 轴翻转（画布 Y↓ → 数据 Y↑）
   const normalizedUser: number[][][] = userPoints.map((stroke) =>
     stroke.map(([x, y]) => [
-      (x - minX) * scale + (1024 - rangeX * scale) / 2,
-      1024 - ((y - minY) * scale + (1024 - rangeY * scale) / 2),
+      (x - userMinX) * scale + (1024 - userRangeX * scale) / 2,
+      1024 - ((y - userMinY) * scale + (1024 - userRangeY * scale) / 2),
+    ])
+  )
+
+  // 归一化标准 medians：居中到 1024 空间（数据已是 Y↑，无需翻转）
+  const normalizedStd: number[][][] = medians.map((stroke) =>
+    stroke.map(([x, y]) => [
+      (x - stdMinX) * scale + (1024 - stdRangeX * scale) / 2,
+      (y - stdMinY) * scale + (1024 - stdRangeY * scale) / 2,
     ])
   )
 
@@ -141,22 +164,24 @@ export function evaluateCharacterScore(
   let totalDist = 0
   let comparedStrokes = 0
 
-  for (let i = 0; i < Math.min(normalizedUser.length, medians.length); i++) {
-    const dist = dtwDistance(normalizedUser[i], medians[i])
+  for (let i = 0; i < Math.min(normalizedUser.length, normalizedStd.length); i++) {
+    const dist = dtwDistance(normalizedUser[i], normalizedStd[i])
     totalDist += dist
     comparedStrokes++
   }
 
   const avgDist = comparedStrokes > 0 ? totalDist / comparedStrokes : 200
 
-  // 距离转分数（1024 坐标系下：<50 优秀，>300 较差）
-  const accuracyScore = Math.max(0, Math.min(100, Math.round(100 - avgDist * 0.4)))
+  // 距离转分数（归一化到同一 1024 空间后：<30 优秀，>200 较差）
+  const accuracyScore = Math.max(0, Math.min(100, Math.round(100 - avgDist * 0.35)))
 
   // 美观度：准确度 + 笔画数匹配
-  const aestheticsScore = Math.round(accuracyScore * 0.6 + strokeCountMatch * 40)
+  const aestheticsScore = Math.round(
+    Math.max(0, Math.min(100, accuracyScore * 0.6 + strokeCountMatch * 40))
+  )
 
-  // 综合评分
-  const score = Math.round(accuracyScore * 0.5 + aestheticsScore * 0.3 + strokeCountMatch * 20)
+  // 综合评分 = 准确度与美观度的加权平均
+  const score = Math.round(accuracyScore * 0.5 + aestheticsScore * 0.5)
 
   return {
     score: Math.max(0, Math.min(100, score)),
