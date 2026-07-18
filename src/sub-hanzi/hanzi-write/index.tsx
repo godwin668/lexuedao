@@ -185,10 +185,13 @@ const WritePage: React.FC = () => {
       sd?.medians
     );
 
-    useHanziStore.getState().setLastSessionData({
+    const sessionData = {
       char: currentChar?.char || '',
       userStrokes: [...userStrokes],
-    });
+    };
+    useHanziStore.getState().setLastSessionData(sessionData);
+    // 同时存入 Taro storage 作为 fallback（子包页面间 store 可能不共享）
+    Taro.setStorageSync('hanzi_last_session', JSON.stringify(sessionData));
 
     // 先跳转结果页，后台异步保存记录，避免用户长时间等待
     Taro.navigateTo({

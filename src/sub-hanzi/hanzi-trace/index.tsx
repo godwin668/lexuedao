@@ -149,10 +149,12 @@ const TracePage: React.FC = () => {
       sd?.medians
     );
 
-    useHanziStore.getState().setLastSessionData({
+    const sessionData = {
       char: currentChar?.char || '',
       userStrokes: [...userStrokes],
-    });
+    };
+    useHanziStore.getState().setLastSessionData(sessionData);
+    Taro.setStorageSync('hanzi_last_session', JSON.stringify(sessionData));
 
     Taro.navigateTo({
       url: `/sub-hanzi/hanzi-result/index?score=${score}&accuracy=${accuracy}&aesthetics=${aesthetics}&char=${currentChar?.char}`,

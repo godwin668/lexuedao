@@ -84,10 +84,12 @@ const TestPage: React.FC = () => {
     finalScores[charIndex] = lastScore;
     const avgAccuracy = finalScores.reduce((a, b) => a + b, 0) / finalScores.length;
 
-    useHanziStore.getState().setLastSessionData({
+    const sessionData = {
       char: currentChar?.char || '',
       userStrokes: [...userStrokes],
-    });
+    };
+    useHanziStore.getState().setLastSessionData(sessionData);
+    Taro.setStorageSync('hanzi_last_session', JSON.stringify(sessionData));
 
     Taro.redirectTo({
       url: `/sub-hanzi/hanzi-result/index?score=${Math.round(avgAccuracy)}&accuracy=${Math.round(avgAccuracy)}&aesthetics=${Math.round(avgAccuracy)}&char=${selectedCharacters.map(c => c.char).join('')}&isTest=1`,

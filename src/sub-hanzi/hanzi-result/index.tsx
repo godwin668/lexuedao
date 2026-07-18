@@ -1,11 +1,10 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useRef } from 'react';
 import { View, Text, Canvas } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import classnames from 'classnames';
 import { useHanziStore } from '@/store/useHanziStore';
 import { getStrokeData } from '@/data/strokeData';
 import { drawGrid, drawAllStrokeOutlines } from '@/utils/canvasStrokeRenderer';
-import { useCanvasCore } from '@/hooks/useCanvasCore';
 import styles from './index.module.scss';
 
 const ResultPage: React.FC = () => {
@@ -21,15 +20,28 @@ const ResultPage: React.FC = () => {
   const aestheticsNum = parseInt(aesthetics as string, 10) || 0;
   const isFromHistory = fromHistory === '1';
 
-  const {
-    ctxRef: userCtxRef,
-    initCanvas: initUserCanvas,
-  } = useCanvasCore({ canvasId: '#userStrokeCanvas' });
+  const [userCanvasReady, setUserCanvasReady] = React.useState(false);
+  const [stdCanvasReady, setStdCanvasReady] = React.useState(false);
+  const userStrokesRef = useRef(lastSessionData?.userStrokes);
 
-  const {
-    ctxRef: stdCtxRef,
-    initCanvas: initStdCanvas,
-  } = useCanvasCore({ canvasId: '#stdStrokeCanvas' });
+  // 从 store 或 storage 获取笔画数据（子包页面间 store 可能不共享，用 storage 兜底）
+  const getSessionData = () => {
+    if (lastSessionData?.userStrokes?.length) return lastSessionData;
+    try {
+      const raw = Taro.getStorageSync('hanzi_last_session');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed?.userStrokes?.length) return parsed;
+      }
+    } catch {}
+    return null;
+  };
+  const sessionData = getSessionData();
+
+  // 保存最新的笔画数据到 ref，避免闭包过期
+  useEffect(() => {
+    userStrokesRef.current = lastSessionData?.userStrokes;
+  }, [lastSessionData]);
 
   const getScoreLevel = (s: number) => {
     if (s >= 90) return { level: 'excellent', text: '太棒了！', emoji: '🌟' };
@@ -40,9 +52,6 @@ const ResultPage: React.FC = () => {
 
   const scoreInfo = getScoreLevel(scoreNum);
 
-  const [userCanvasReady, setUserCanvasReady] = React.useState(false);
-  const [stdCanvasReady, setStdCanvasReady] = React.useState(false);
-
   const improvementTips = useMemo(() => {
     const tips: string[] = [];
     if (accuracyNum < 70) tips.push('注意笔画的起笔和收笔位置，多看示范动画');
@@ -52,40 +61,84 @@ const ResultPage: React.FC = () => {
     return tips;
   }, [accuracyNum, aestheticsNum]);
 
+  // 直接初始化 Canvas 并绘制，不依赖 useCanvasCore
+  const initCanvasDirect = (
+    canvasId: string,
+    drawFn: (ctx: any, w: number, h: number) => void,
+    retryCount = 0,
+  ) => {
+    const MAX_RETRY = 8;
+    setTimeout(() => {
+      const query = Taro.createSelectorQuery();
+      query
+        .select(canvasId)
+        .fields({ node: true, size: true })
+        .exec((res) => {
+          if (res[0] && res[0].node) {
+            const canvas = res[0].node;
+            const ctx = canvas.getContext('2d');
+            const dpr = Taro.getSystemInfoSync().pixelRatio;
+            const lw = res[0].width;
+            const lh = res[0].height;
+            canvas.width = lw * dpr;
+            canvas.height = lh * dpr;
+            ctx.scale(dpr, dpr);
+            console.log(`[ResultPage] ${canvasId} init OK, size: ${lw}x${lh}`);
+            drawFn(ctx, lw, lh);
+          } else if (retryCount < MAX_RETRY) {
+            console.warn(`[ResultPage] ${canvasId} retry ${retryCount + 1}/${MAX_RETRY}`);
+            initCanvasDirect(canvasId, drawFn, retryCount + 1);
+          } else {
+            console.error(`[ResultPage] ${canvasId} init failed`);
+          }
+        });
+    }, 150 + retryCount * 200);
+  };
+
+  // 绘制用户书写笔迹
   useEffect(() => {
-    if (!lastSessionData?.userStrokes?.length) {
+    const strokes = sessionData?.userStrokes;
+    if (!strokes?.length) {
       setUserCanvasReady(false);
       return;
     }
 
-    initUserCanvas((ctx, w, h) => {
+    initCanvasDirect('#userStrokeCanvas', (ctx, w, h) => {
       drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 6, gridSize: 1024 }, 'rgba(0,0,0,0.06)');
 
-      const strokes = lastSessionData.userStrokes;
-      if (strokes.length > 0) {
+      // 使用 ref 获取最新数据
+      const currentStrokes = userStrokesRef.current || strokes;
+      if (currentStrokes.length > 0) {
         let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-        for (const stroke of strokes) {
+        for (const stroke of currentStrokes) {
           for (const pt of stroke) {
             const [x, y] = pt.split(',').map(Number);
+            if (isNaN(x) || isNaN(y)) continue;
             if (x < minX) minX = x;
             if (y < minY) minY = y;
             if (x > maxX) maxX = x;
             if (y > maxY) maxY = y;
           }
         }
+
+        if (minX === Infinity) {
+          setUserCanvasReady(true);
+          return;
+        }
+
         const rangeX = maxX - minX || 1;
         const rangeY = maxY - minY || 1;
         const margin = 12;
         const drawW = w - margin * 2;
         const drawH = h - margin * 2;
-        const scale = Math.min(drawW / rangeX, drawH / rangeY);
+        const scale = Math.min(drawW / rangeX, drawH / rangeY) * 0.9;
 
         ctx.strokeStyle = '#333';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
-        for (const stroke of strokes) {
+        for (const stroke of currentStrokes) {
           if (stroke.length < 2) continue;
           ctx.beginPath();
           const [sx, sy] = stroke[0].split(',').map(Number);
@@ -104,16 +157,17 @@ const ResultPage: React.FC = () => {
 
       setUserCanvasReady(true);
     });
-  }, [lastSessionData, initUserCanvas]);
+  }, [sessionData]);
 
+  // 绘制标准字帖
   useEffect(() => {
-    const charStr = (char as string) || lastSessionData?.char;
+    const charStr = (char as string) || sessionData?.char;
     if (!charStr) {
       setStdCanvasReady(false);
       return;
     }
 
-    initStdCanvas((ctx, w, h) => {
+    initCanvasDirect('#stdStrokeCanvas', (ctx, w, h) => {
       drawGrid(ctx, { canvasWidth: w, canvasHeight: h, margin: 6, gridSize: 1024 }, 'rgba(71,184,129,0.15)');
 
       const strokeData = getStrokeData(charStr);
@@ -127,7 +181,7 @@ const ResultPage: React.FC = () => {
 
       setStdCanvasReady(true);
     });
-  }, [char, lastSessionData, initStdCanvas]);
+  }, [char, sessionData]);
 
   const handleShare = () => {
     Taro.showShareMenu({
@@ -215,7 +269,7 @@ const ResultPage: React.FC = () => {
                     style={{ visibility: userCanvasReady ? 'visible' : 'hidden' }}
                   />
                   {!userCanvasReady && (
-                    <Text className={styles.compareFallback}>{char || lastSessionData?.char || '?'}</Text>
+                    <Text className={styles.compareFallback}>{char || sessionData?.char || '?'}</Text>
                   )}
                 </View>
                 <Text className={styles.compareLabel}>你的书写</Text>
@@ -229,7 +283,7 @@ const ResultPage: React.FC = () => {
                     style={{ visibility: stdCanvasReady ? 'visible' : 'hidden' }}
                   />
                   {!stdCanvasReady && (
-                    <Text className={styles.compareFallback}>{char || lastSessionData?.char || '?'}</Text>
+                    <Text className={styles.compareFallback}>{char || sessionData?.char || '?'}</Text>
                   )}
                 </View>
                 <Text className={styles.compareLabel}>标准字帖</Text>

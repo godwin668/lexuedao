@@ -136,22 +136,23 @@ export function evaluateCharacterScore(
   const stdRangeX = stdMaxX - stdMinX || 1
   const stdRangeY = stdMaxY - stdMinY || 1
 
-  // 统一缩放到 1024 空间（取两者中较大的缩放比，保持比例一致）
-  const scale = 1024 / Math.max(userRangeX, userRangeY, stdRangeX, stdRangeY)
+  // 各自独立缩放到 1024 空间，确保用户笔画和标准笔画在同一尺度下对比
+  const userScale = 1024 / Math.max(userRangeX, userRangeY)
+  const stdScale = 1024 / Math.max(stdRangeX, stdRangeY)
 
   // 归一化用户笔画：居中到 1024 空间，Y 轴翻转（画布 Y↓ → 数据 Y↑）
   const normalizedUser: number[][][] = userPoints.map((stroke) =>
     stroke.map(([x, y]) => [
-      (x - userMinX) * scale + (1024 - userRangeX * scale) / 2,
-      1024 - ((y - userMinY) * scale + (1024 - userRangeY * scale) / 2),
+      (x - userMinX) * userScale + (1024 - userRangeX * userScale) / 2,
+      1024 - ((y - userMinY) * userScale + (1024 - userRangeY * userScale) / 2),
     ])
   )
 
   // 归一化标准 medians：居中到 1024 空间（数据已是 Y↑，无需翻转）
   const normalizedStd: number[][][] = medians.map((stroke) =>
     stroke.map(([x, y]) => [
-      (x - stdMinX) * scale + (1024 - stdRangeX * scale) / 2,
-      (y - stdMinY) * scale + (1024 - stdRangeY * scale) / 2,
+      (x - stdMinX) * stdScale + (1024 - stdRangeX * stdScale) / 2,
+      (y - stdMinY) * stdScale + (1024 - stdRangeY * stdScale) / 2,
     ])
   )
 
