@@ -24,6 +24,7 @@ const WritePage: React.FC = () => {
     ctxRef,
     logicalSizeRef,
     userStrokes,
+    userStrokesRef,
     setUserStrokes,
     initCanvas,
     clearCanvas,
@@ -179,15 +180,20 @@ const WritePage: React.FC = () => {
   const handleSubmit = async () => {
     animRendererRef.current?.destroy();
 
+    const currentStrokes = userStrokesRef.current;
+    console.log('[WritePage] handleSubmit, userStrokes:', currentStrokes.length, 'strokes');
+
     const sd = getStrokeData(currentChar?.char || '');
+    console.log('[WritePage] char:', currentChar?.char, 'medians:', sd?.medians?.length);
+
     const { score, accuracy, aesthetics } = evaluateCharacterScore(
-      userStrokes,
+      currentStrokes,
       sd?.medians
     );
 
     const sessionData = {
       char: currentChar?.char || '',
-      userStrokes: [...userStrokes],
+      userStrokes: [...currentStrokes],
     };
     useHanziStore.getState().setLastSessionData(sessionData);
     // 同时存入 Taro storage 作为 fallback（子包页面间 store 可能不共享）
@@ -204,7 +210,7 @@ const WritePage: React.FC = () => {
       grade: useHanziStore.getState().currentGrade,
       contentJson: {
         character: currentChar?.char || '',
-        strokes: userStrokes,
+        strokes: currentStrokes,
         aesthetics,
       },
       score,

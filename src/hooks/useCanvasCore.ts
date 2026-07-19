@@ -28,6 +28,10 @@ export function useCanvasCore(options: CanvasCoreOptions) {
   const strokeColorRef = useRef(strokeColor);
 
   const [userStrokes, setUserStrokes] = useState<string[][]>([]);
+  const userStrokesRef = useRef<string[][]>([]);
+
+  // 同步 userStrokes 到 ref，避免 handleSubmit 等闭包中拿到过期值
+  useEffect(() => { userStrokesRef.current = userStrokes; }, [userStrokes]);
 
   // 同步外部状态到 ref（避免 touch handler 闭包过期）
   useEffect(() => { disabledRef.current = disabled; }, [disabled]);
@@ -172,6 +176,7 @@ export function useCanvasCore(options: CanvasCoreOptions) {
     ctxRef,
     logicalSizeRef,
     userStrokes,
+    userStrokesRef,
     setUserStrokes,
     initCanvas,
     clearCanvas,

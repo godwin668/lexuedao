@@ -280,7 +280,7 @@ const ProfilePage: React.FC = () => {
           </View>
         </View>
         <View className={styles.menuItem}>
-          <Text>ℹ️ 关于乐学岛</Text>
+          <Text>ℹ️ 关于乐学小岛</Text>
           <Text className={styles.arrow}>›</Text>
         </View>
       </View>

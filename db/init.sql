@@ -1,5 +1,5 @@
 -- ============================================
--- 乐学岛 PostgreSQL 数据库初始化脚本
+-- 乐学小岛 PostgreSQL 数据库初始化脚本
 -- CloudBase PostgreSQL 15+
 -- ============================================
 
@@ -245,7 +245,7 @@ COMMENT ON COLUMN user_skill_profile.strong_tags IS '擅长知识点标签';
 
 INSERT INTO achievements (key, name, description, icon, subject, condition_json) VALUES
 -- 通用成就
-('first_login', '初次见面', '第一次登录乐学岛', '🌟', 'general', '{"type":"login","target":1}'),
+('first_login', '初次见面', '第一次登录乐学小岛', '🌟', 'general', '{"type":"login","target":1}'),
 ('seven_day_streak', '七日坚持', '连续打卡7天', '🔥', 'general', '{"type":"streak","target":7}'),
 ('thirty_day_streak', '月度之星', '连续打卡30天', '👑', 'general', '{"type":"streak","target":30}'),
 ('level_10', '小有成就', '达到10级', '⭐', 'general', '{"type":"level","target":10}'),

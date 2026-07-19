@@ -22,6 +22,7 @@ const TestPage: React.FC = () => {
 
   const {
     userStrokes,
+    userStrokesRef,
     setUserStrokes,
     initCanvas,
     clearCanvas,
@@ -61,8 +62,9 @@ const TestPage: React.FC = () => {
   };
 
   const handleNextChar = () => {
+    const currentStrokes = userStrokesRef.current;
     const sd = getStrokeData(currentChar?.char || '');
-    const { score } = evaluateCharacterScore(userStrokes, sd?.medians);
+    const { score } = evaluateCharacterScore(currentStrokes, sd?.medians);
 
     const newScores = [...scores];
     newScores[charIndex] = score;
@@ -77,8 +79,9 @@ const TestPage: React.FC = () => {
   const handleSubmit = async () => {
     clearInterval(timerRef.current);
 
+    const currentStrokes = userStrokesRef.current;
     const sd = getStrokeData(currentChar?.char || '');
-    const { score: lastScore } = evaluateCharacterScore(userStrokes, sd?.medians);
+    const { score: lastScore } = evaluateCharacterScore(currentStrokes, sd?.medians);
 
     const finalScores = [...scores];
     finalScores[charIndex] = lastScore;
@@ -86,7 +89,7 @@ const TestPage: React.FC = () => {
 
     const sessionData = {
       char: currentChar?.char || '',
-      userStrokes: [...userStrokes],
+      userStrokes: [...currentStrokes],
     };
     useHanziStore.getState().setLastSessionData(sessionData);
     Taro.setStorageSync('hanzi_last_session', JSON.stringify(sessionData));

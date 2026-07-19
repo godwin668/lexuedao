@@ -89,8 +89,11 @@ export function evaluateCharacterScore(
   userStrokes: string[][],
   medians?: number[][][]
 ): { score: number; accuracy: number; aesthetics: number } {
+  console.log('[Scoring] userStrokes count:', userStrokes?.length, 'medians count:', medians?.length)
+
   // 无书写内容
   if (!userStrokes || userStrokes.length === 0) {
+    console.log('[Scoring] 无书写内容，返回 0')
     return { score: 0, accuracy: 0, aesthetics: 0 }
   }
 
@@ -98,6 +101,7 @@ export function evaluateCharacterScore(
   if (!medians || medians.length === 0) {
     const strokeCount = userStrokes.length
     const baseScore = Math.min(70, strokeCount * 10)
+    console.log('[Scoring] 无标准数据，strokeCount:', strokeCount, 'baseScore:', baseScore)
     return { score: baseScore, accuracy: baseScore, aesthetics: baseScore }
   }
 
@@ -108,6 +112,8 @@ export function evaluateCharacterScore(
       return [x, y]
     })
   )
+
+  console.log('[Scoring] userPoints strokes:', userPoints.map(s => s.length))
 
   // 计算用户笔画的包围盒
   let userMinX = Infinity, userMinY = Infinity, userMaxX = -Infinity, userMaxY = -Infinity
@@ -173,8 +179,12 @@ export function evaluateCharacterScore(
 
   const avgDist = comparedStrokes > 0 ? totalDist / comparedStrokes : 200
 
+  console.log('[Scoring] totalDist:', totalDist, 'comparedStrokes:', comparedStrokes, 'avgDist:', avgDist)
+
   // 距离转分数（归一化到同一 1024 空间后：<30 优秀，>200 较差）
   const accuracyScore = Math.max(0, Math.min(100, Math.round(100 - avgDist * 0.35)))
+
+  console.log('[Scoring] accuracyScore:', accuracyScore, 'strokeCountMatch:', strokeCountMatch)
 
   // 美观度：准确度 + 笔画数匹配
   const aestheticsScore = Math.round(
@@ -183,6 +193,8 @@ export function evaluateCharacterScore(
 
   // 综合评分 = 准确度与美观度的加权平均
   const score = Math.round(accuracyScore * 0.5 + aestheticsScore * 0.5)
+
+  console.log('[Scoring] aestheticsScore:', aestheticsScore, 'final score:', score)
 
   return {
     score: Math.max(0, Math.min(100, score)),

@@ -22,6 +22,7 @@ const TracePage: React.FC = () => {
     ctxRef,
     logicalSizeRef,
     userStrokes,
+    userStrokesRef,
     setUserStrokes,
     initCanvas,
     clearCanvas,
@@ -143,15 +144,16 @@ const TracePage: React.FC = () => {
   const handleSubmit = async () => {
     animRendererRef.current?.destroy();
 
+    const currentStrokes = userStrokesRef.current;
     const sd = getStrokeData(currentChar?.char || '');
     const { score, accuracy, aesthetics } = evaluateCharacterScore(
-      userStrokes,
+      currentStrokes,
       sd?.medians
     );
 
     const sessionData = {
       char: currentChar?.char || '',
-      userStrokes: [...userStrokes],
+      userStrokes: [...currentStrokes],
     };
     useHanziStore.getState().setLastSessionData(sessionData);
     Taro.setStorageSync('hanzi_last_session', JSON.stringify(sessionData));
@@ -166,7 +168,7 @@ const TracePage: React.FC = () => {
       grade: useHanziStore.getState().currentGrade,
       contentJson: {
         character: currentChar?.char || '',
-        strokes: userStrokes,
+        strokes: currentStrokes,
         aesthetics,
       },
       score,
